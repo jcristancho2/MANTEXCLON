@@ -1,0 +1,1374 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>MANTEX 5.0 (réplica)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1f0; --panel:#ffffff; --panel-2:#f4f6f5; --line:#d7dcda;
+  --fg:#1c2530; --muted:#5c6670; --accent:#2b5fae; --accent-ink:#17407f; --accent-soft:#e3ebfa;
+  --accent2:#c2703d; --accent2-soft:#f6e6da;
+  --ok:#1f8a53; --ok-soft:#e1f3ea; --warn:#a9770f; --warn-soft:#faefd7; --bad:#b23c3c; --bad-soft:#fae3e3;
+  --topbar:#1a2740; --topbar-fg:#eef2fb;
+  --shadow:0 1px 2px rgba(20,30,45,.06),0 8px 20px -14px rgba(20,30,45,.2);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1319; --panel:#171e27; --panel-2:#121820; --line:#2a333e;
+    --fg:#e7ebf1; --muted:#98a2b1; --accent:#7badfb; --accent-ink:#bcd6ff; --accent-soft:#1d2c47;
+    --accent2:#e3a06f; --accent2-soft:#3a2a1d;
+    --ok:#5fcf93; --ok-soft:#163327; --warn:#e3b955; --warn-soft:#3a2f14; --bad:#e98a8a; --bad-soft:#3a1d1d;
+    --topbar:#0c121c; --topbar-fg:#e7ebf1;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 20px -14px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1319; --panel:#171e27; --panel-2:#121820; --line:#2a333e;
+  --fg:#e7ebf1; --muted:#98a2b1; --accent:#7badfb; --accent-ink:#bcd6ff; --accent-soft:#1d2c47;
+  --accent2:#e3a06f; --accent2-soft:#3a2a1d;
+  --ok:#5fcf93; --ok-soft:#163327; --warn:#e3b955; --warn-soft:#3a2f14; --bad:#e98a8a; --bad-soft:#3a1d1d;
+  --topbar:#0c121c; --topbar-fg:#e7ebf1;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 20px -14px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px;line-height:1.5}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+button,input,select,textarea{font-family:inherit;font-size:14px;color:var(--fg)}
+button{cursor:pointer}
+.gutter{padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+#app{min-height:100vh;display:flex;flex-direction:column}
+
+/* ---- generic buttons / inputs ---- */
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 14px;border-radius:8px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--panel-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-ink)}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:7px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=email],input[type=password],select,textarea{
+  width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg);
+}
+textarea{resize:vertical;min-height:70px}
+label.field{display:block;margin-bottom:14px;min-width:0}
+label.field .lbl{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:500}
+label.field .lbl .req{color:var(--bad)}
+.field-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 14px}
+fieldset.section{border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px;background:var(--panel)}
+fieldset.section > legend{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-ink);font-weight:600;padding:0 6px}
+.chipsel{display:flex;flex-wrap:wrap;gap:6px}
+.chipsel button{border:1px solid var(--line);background:var(--panel-2);padding:6px 11px;border-radius:999px;font-size:12.5px;color:var(--fg)}
+.chipsel button.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.badge{display:inline-flex;align-items:center;font-family:"IBM Plex Mono";font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2)}
+.badge.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.badge.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.badge.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.badge.acc{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+
+/* ---- screens: login / company select ---- */
+.center-screen{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 16px}
+.auth-card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 26px;box-shadow:var(--shadow)}
+.auth-card h1{font-size:20px;margin:0 0 4px}
+.auth-card p.sub{color:var(--muted);font-size:13.5px;margin:0 0 20px}
+.brandmark{width:40px;height:40px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono";font-weight:600;margin-bottom:14px}
+
+.company-wrap{width:100%;max-width:560px}
+.company-wrap h1{font-size:20px;margin:0 0 18px;text-align:center}
+.co-card{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.co-card:hover{border-color:var(--accent)}
+.co-avatar{width:42px;height:42px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.co-card .meta{flex:1;min-width:0}
+.co-card .meta .nm{font-weight:600}
+.co-card .meta .sub{font-size:12.5px;color:var(--muted)}
+
+/* ---- topbar ---- */
+.topbar{background:var(--topbar);color:var(--topbar-fg);display:flex;align-items:center;gap:10px;padding:10px max(16px,env(safe-area-inset-left,0px)) 10px max(16px,env(safe-area-inset-right,0px));position:sticky;top:0;z-index:20}
+.topbar .back{background:transparent;border:none;color:var(--topbar-fg);font-size:18px;padding:4px 8px;border-radius:7px}
+.topbar .back:hover{background:rgba(255,255,255,.1)}
+.topbar .ttl{font-weight:600;font-size:15.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .acts{display:flex;gap:4px;flex-shrink:0}
+.topbar .acts button{background:transparent;border:none;color:var(--topbar-fg);padding:6px 9px;border-radius:7px;font-size:13px}
+.topbar .acts button:hover{background:rgba(255,255,255,.12)}
+.topbar .acts button.hl{background:#ffffff22}
+
+/* ---- home grid ---- */
+.home-head{padding:16px max(16px,env(safe-area-inset-left,0px)) 4px}
+.home-head .co-name{font-size:19px;font-weight:700}
+.home-head .co-role{font-size:12.5px;color:var(--muted)}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:14px max(16px,env(safe-area-inset-left,0px)) 40px}
+.tile{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:14px 12px;text-align:left;box-shadow:var(--shadow);min-height:92px;display:flex;flex-direction:column;justify-content:space-between}
+.tile:hover{transform:translateY(-1px)}
+.tile .ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono";font-weight:700;font-size:12px;background:var(--panel-2);color:var(--accent-ink)}
+.tile .lbl{font-size:12.8px;font-weight:600;margin-top:8px;line-height:1.25}
+.tile.plan-basico{border-left-color:#c9a227}
+.tile.plan-profesional{border-left-color:#2b5fae}
+.tile.plan-empresarial{border-left-color:#7b3fae}
+.tile.plan-profemp{border-left-color:#9a3fae}
+
+/* ---- module screen layout ---- */
+.mod-body{flex:1;padding:16px max(16px,env(safe-area-inset-left,0px)) 60px;max-width:1080px;width:100%;margin:0 auto}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.toolbar input[type=search],.toolbar input[type=text]{flex:1;min-width:160px}
+.toolbar .spacer{flex:1}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{border:1px solid var(--line);background:var(--panel);padding:6px 12px;border-radius:999px;font-size:13px}
+.tabs button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.tabs button .cnt{opacity:.75;margin-left:4px}
+
+.card-list{display:flex;flex-direction:column;gap:10px}
+.item-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow);min-width:0}
+.item-card .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.item-card .ttl{font-weight:600;font-size:14.5px}
+.item-card .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.item-card .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.item-card .acts{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
+.empty-state{text-align:center;color:var(--muted);padding:50px 10px;font-size:14px}
+.pager{display:flex;justify-content:center;align-items:center;gap:10px;color:var(--muted);font-size:12.5px;margin-top:14px}
+
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table.data{width:100%;border-collapse:collapse;font-size:13.3px;min-width:560px}
+table.data thead th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--muted);padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.data tbody td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.data tbody tr:last-child td{border-bottom:none}
+table.data tbody tr:hover{background:var(--panel-2)}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.stat-box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer}
+.stat-box.active{border-color:var(--accent)}
+.stat-box .n{font-family:"IBM Plex Mono";font-size:22px;font-weight:600}
+.stat-box .l{font-size:11.5px;color:var(--muted)}
+
+/* ---- modal / drawer ---- */
+.overlay{position:fixed;inset:0;background:rgba(10,14,20,.5);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+@media (min-width:720px){.overlay{align-items:center}}
+.sheet{background:var(--panel);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;box-shadow:var(--shadow)}
+@media (min-width:720px){.sheet{border-radius:14px;max-height:88vh}}
+.sheet-head{position:sticky;top:0;background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.sheet-head h2{font-size:16.5px;margin:0}
+.sheet-body{padding:18px}
+.sheet-foot{position:sticky;bottom:0;background:var(--panel);display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid var(--line)}
+.iconbtn{background:transparent;border:none;color:var(--muted);font-size:18px;padding:4px 8px;border-radius:7px}
+.iconbtn:hover{background:var(--panel-2)}
+
+.confirm-box{max-width:360px;text-align:center;padding:26px 22px}
+.confirm-box p{color:var(--muted);font-size:13.5px}
+.confirm-box .acts{display:flex;gap:8px;justify-content:center;margin-top:18px}
+
+.sig-pad{border:1px dashed var(--line);border-radius:10px;touch-action:none;width:100%;height:110px;background:var(--panel-2)}
+
+.toast-wrap{position:fixed;bottom:18px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:80;pointer-events:none}
+.toast{background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:13px;box-shadow:var(--shadow)}
+
+.kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kcol h4{font-size:12.5px;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.kcol .item-card{margin-bottom:8px}
+
+.perm-group{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:var(--panel)}
+.perm-group summary{padding:10px 14px;font-weight:600;font-size:13.5px;cursor:pointer}
+.perm-row{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-top:1px solid var(--line);font-size:13px;gap:10px}
+.switch{position:relative;width:38px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch .trk{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:.15s}
+.switch .trk::after{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s}
+.switch input:checked + .trk{background:var(--accent)}
+.switch input:checked + .trk::after{left:19px}
+.role-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+
+.flowbar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.flowbar button{font-size:11.5px}
+.sign-placeholder{font-size:12px;color:var(--muted);text-align:center;padding-top:40px}
+
+@media (max-width:520px){ .item-card .row1{flex-direction:column} }
+</style>
+<div id="app"></div>
+<div id="overlays"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+<script>
+/* =========================================================================
+   MANTEX 5.0 — réplica funcional (demo educativa, sin backend real)
+   Estado en memoria + localStorage por visor. Sin librerías externas.
+   ========================================================================= */
+"use strict";
+
+/* ---------------- utilidades ---------------- */
+const $app = document.getElementById('app');
+const $ov = document.getElementById('overlays');
+const $toasts = document.getElementById('toastWrap');
+function uid(p){ return (p||'id') + '_' + Math.random().toString(36).slice(2,9); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function nowHHMM(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function toast(msg){
+  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+  $toasts.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 2200);
+}
+function closeOverlay(){ $ov.innerHTML=''; }
+function openOverlay(html){ $ov.innerHTML = '<div class="overlay" id="ovBg">'+html+'</div>';
+  document.getElementById('ovBg').addEventListener('mousedown', e=>{ if(e.target.id==='ovBg') askCloseOverlay(); });
+}
+let overlayDirty = false;
+function askCloseOverlay(force){
+  if(overlayDirty && !force){
+    openConfirm('¿Salir sin guardar?','Si sales ahora perderás la información que llevas registrada.','Salir','Seguir editando',()=>{ overlayDirty=false; closeOverlay(); });
+    return;
+  }
+  overlayDirty=false; closeOverlay();
+}
+function openConfirm(title, body, okLabel, cancelLabel, onOk){
+  const html = `<div class="sheet confirm-box" onmousedown="event.stopPropagation()">
+    <h2 style="font-size:16px;margin:0 0 6px">${esc(title)}</h2>
+    <p>${esc(body)}</p>
+    <div class="acts">
+      <button class="btn" id="cfCancel">${esc(cancelLabel||'Cancelar')}</button>
+      <button class="btn danger" id="cfOk">${esc(okLabel||'Confirmar')}</button>
+    </div>
+  </div>`;
+  const prevOv = $ov.innerHTML;
+  $ov.insertAdjacentHTML('beforeend', `<div class="overlay" id="cfBg">${html}</div>`);
+  document.getElementById('cfCancel').onclick = ()=>{ document.getElementById('cfBg').remove(); };
+  document.getElementById('cfOk').onclick = ()=>{ document.getElementById('cfBg').remove(); onOk && onOk(); };
+}
+function fieldHTML(f, value){
+  const v = value==null ? (f.default!=null?f.default:'') : value;
+  const req = f.required ? '<span class="req"> *</span>' : '';
+  let input='';
+  if(f.type==='select'){
+    input = `<select name="${f.key}" ${f.required?'required':''}>` +
+      (f.placeholder?`<option value="">${esc(f.placeholder)}</option>`:'') +
+      f.options.map(o=>`<option value="${esc(o)}" ${o===v?'selected':''}>${esc(o)}</option>`).join('') + `</select>`;
+  } else if(f.type==='textarea'){
+    input = `<textarea name="${f.key}" ${f.required?'required':''} placeholder="${esc(f.placeholder||'')}">${esc(v)}</textarea>`;
+  } else if(f.type==='chips'){
+    input = `<div class="chipsel" data-chipfield="${f.key}">` + f.options.map(o=>
+      `<button type="button" class="${o===v?'sel':''}" data-chipval="${esc(o)}">${esc(o)}</button>`).join('') +
+      `<input type="hidden" name="${f.key}" value="${esc(v)}" required=${f.required?'true':'false'}></div>`;
+  } else if(f.type==='number'){
+    input = `<input type="number" name="${f.key}" value="${esc(v)}" ${f.min!=null?`min="${f.min}"`:''} ${f.required?'required':''}>`;
+  } else if(f.type==='date'){
+    input = `<input type="date" name="${f.key}" value="${esc(v)}" ${f.required?'required':''}>`;
+  } else if(f.type==='time'){
+    input = `<input type="time" name="${f.key}" value="${esc(v)}" ${f.required?'required':''}>`;
+  } else if(f.type==='toggle'){
+    input = `<label class="switch"><input type="checkbox" name="${f.key}" ${v?'checked':''}><span class="trk"></span></label>`;
+  } else if(f.type==='sign'){
+    input = `<canvas class="sig-pad" data-sig="${f.key}" width="560" height="110"></canvas>
+      <input type="hidden" name="${f.key}" value="${v?'1':''}">
+      <div style="margin-top:6px"><button type="button" class="btn sm" data-clearsig="${f.key}">Limpiar firma</button></div>`;
+  } else {
+    input = `<input type="text" name="${f.key}" value="${esc(v)}" placeholder="${esc(f.placeholder||'')}" ${f.required?'required':''}>`;
+  }
+  return `<label class="field"><span class="lbl">${esc(f.label)}${req}</span>${input}</label>`;
+}
+function readForm(form, fields){
+  const out = {};
+  fields.forEach(f=>{
+    if(f.type==='toggle'){ out[f.key] = form.querySelector(`[name="${f.key}"]`).checked; }
+    else if(f.type==='number'){ const el=form.querySelector(`[name="${f.key}"]`); out[f.key] = el.value===''?null:Number(el.value); }
+    else { const el=form.querySelector(`[name="${f.key}"]`); out[f.key] = el ? el.value : ''; }
+  });
+  return out;
+}
+function wireChips(container){
+  container.querySelectorAll('[data-chipfield]').forEach(wrap=>{
+    wrap.querySelectorAll('[data-chipval]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        wrap.querySelectorAll('button').forEach(b=>b.classList.remove('sel'));
+        btn.classList.add('sel');
+        wrap.querySelector('input[type=hidden]').value = btn.dataset.chipval;
+        overlayDirty = true;
+      });
+    });
+  });
+}
+function wireSign(container){
+  container.querySelectorAll('canvas.sig-pad').forEach(cv=>{
+    const ctx = cv.getContext('2d'); let drawing=false;
+    const hid = container.querySelector(`input[type=hidden][name="${cv.dataset.sig}"]`);
+    ctx.strokeStyle = getComputedStyle(document.body).color; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.lineCap='round';
+    function pos(e){ const r=cv.getBoundingClientRect(); const p = e.touches? e.touches[0]:e; return [(p.clientX-r.left)*(cv.width/r.width), (p.clientY-r.top)*(cv.height/r.height)]; }
+    function start(e){ drawing=true; const [x,y]=pos(e); ctx.beginPath(); ctx.moveTo(x,y); overlayDirty=true; }
+    function move(e){ if(!drawing) return; const [x,y]=pos(e); ctx.lineTo(x,y); ctx.stroke(); hid.value='1'; e.preventDefault(); }
+    function end(){ drawing=false; }
+    cv.addEventListener('mousedown',start); cv.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
+    cv.addEventListener('touchstart',start); cv.addEventListener('touchmove',move,{passive:false}); cv.addEventListener('touchend',end);
+  });
+  container.querySelectorAll('[data-clearsig]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const cv = container.querySelector(`canvas[data-sig="${btn.dataset.clearsig}"]`);
+      cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+      container.querySelector(`input[type=hidden][name="${btn.dataset.clearsig}"]`).value='';
+    });
+  });
+}
+
+/* ---------------- datos semilla ---------------- */
+const PERM_CATEGORIES = [
+  ['Equipos', ['Ver lista de equipos e inmuebles','Registrar equipos e inmuebles','Editar equipos e inmuebles','Eliminar equipos e inmuebles','Eliminación masiva de equipos','Importar equipos desde Excel/SAP','Ver y generar QR de equipos','Registrar parada extendida']],
+  ['Mantenimiento', ['Registrar mantenimiento','Ver reportes de mantenimiento','Editar reportes','Eliminar reportes','Ver dashboard de reportes','Ocultar/mostrar usuarios en control de reportes']],
+  ['Solicitudes', ['Ver módulo de solicitudes','Ver todas las solicitudes','Gestionar/cerrar solicitudes','Editar campos bloqueados al atender']],
+  ['Órdenes de trabajo', ['Crear OT','Editar OT','Cerrar/completar OT','Cerrar semana y ver cumplimiento','Reasignar OT','Eliminar OT','Ver detalle de OT','Ver calendario de OT','Ver cumplimiento mensual','Firmar OT a conformidad']],
+  ['Almacén', ['Editar inventario','Gestionar pedidos','Procesar solicitudes','Aprobar solicitudes de compra','Editar solicitudes de compra','Ver solicitudes propias','Ver plan de insumos periódicos','Agregar/editar insumos periódicos','Eliminar insumos del plan']],
+  ['Usuarios', ['Aprobar/rechazar usuarios','Cambiar roles de usuarios']],
+  ['Planes', ['Crear y editar planes','Ver planes','Ver estado de mantenimiento','Eliminar planes','Ver calendario combinado','Asignar turnos en calendario','Crear actividades especiales','Editar actividades especiales','Mover actividades entre días','Mostrar N° de OT en calendario','Generar todas las OTs de la semana']],
+  ['Medidores', ['Registrar lecturas de medidores','Ver historial y gráficas','Editar medidores configurados']],
+  ['Programación', ['Ver programación de personal','Crear/editar programación','Ver programación semanal']],
+  ['Rutinas', ['Crear y editar rutinas','Ver rutinas','Ver estado de rutinas','Ver plantillas de programa','Crear/editar/aplicar plantillas']],
+  ['Indicadores', ['Ver módulo de indicadores','Ingresar/editar datos del mes','Configurar indicadores','Ver más opciones','Publicar indicadores']],
+  ['Exportar', ['Exportar equipos (PDF/Excel)','Exportar reportes (PDF/Excel)','Exportar OT (PDF)','Exportar solicitudes (PDF/Excel)','Exportar repuestos (PDF)','Exportar programación (PDF)']],
+  ['Sistema', ['Editar ajustes de empresa','Ver ajustes (solo lectura)','Ver Mis Notas','Publicar y eliminar avisos','Ver registros históricos','Eliminar registros históricos','Configurar permisos por rol']],
+];
+const ROLES = ['ADMINISTRADOR','COORDINADOR','PLANEADOR','SUPERVISOR','SUPERVISOR B','TECNICO','ALMACEN','DIRECTIVO','DIRECTIVO B'];
+function defaultPermsForRole(role){
+  const all = {}; PERM_CATEGORIES.forEach(([,perms])=>perms.forEach(p=>all[p]=false));
+  if(role==='ADMINISTRADOR'){ Object.keys(all).forEach(k=>all[k]=true); return all; }
+  if(role==='TECNICO'){ ['Registrar mantenimiento','Ver reportes de mantenimiento','Ver módulo de solicitudes','Ver detalle de OT','Registrar lecturas de medidores','Ver Mis Notas'].forEach(k=>all[k]=true); return all; }
+  if(role==='SUPERVISOR' || role==='SUPERVISOR B'){ ['Ver lista de equipos e inmuebles','Registrar mantenimiento','Ver reportes de mantenimiento','Gestionar/cerrar solicitudes','Crear OT','Editar OT','Firmar OT a conformidad','Ver planes','Ver estado de mantenimiento','Ver rutinas','Ver estado de rutinas','Ver Mis Notas'].forEach(k=>all[k]=true); return all; }
+  if(role==='PLANEADOR'){ ['Ver lista de equipos e inmuebles','Crear y editar planes','Ver planes','Crear y editar rutinas','Ver rutinas','Crear OT','Ver calendario de OT','Generar todas las OTs de la semana','Ver módulo de indicadores','Ingresar/editar datos del mes','Publicar indicadores','Ver Mis Notas'].forEach(k=>all[k]=true); return all; }
+  if(role==='ALMACEN'){ ['Editar inventario','Gestionar pedidos','Procesar solicitudes','Editar solicitudes de compra','Ver solicitudes propias','Ver plan de insumos periódicos','Agregar/editar insumos periódicos','Ver Mis Notas'].forEach(k=>all[k]=true); return all; }
+  if(role==='COORDINADOR'){ ['Ver lista de equipos e inmuebles','Aprobar/rechazar usuarios','Cambiar roles de usuarios','Gestionar/cerrar solicitudes','Reasignar OT','Ver cumplimiento mensual','Ver Mis Notas'].forEach(k=>all[k]=true); return all; }
+  if(role==='DIRECTIVO' || role==='DIRECTIVO B'){ ['Ver módulo de indicadores','Ver dashboard de reportes','Ver cumplimiento mensual','Ver ajustes (solo lectura)','Ver Mis Notas'].forEach(k=>all[k]=true); return all; }
+  return all;
+}
+
+function seedDB(){
+  const companies = [
+    { id:'co1', nombre:'VITELSA - B/MANGA', nit:'890.456.123-1', direccion:'Km 7 vía Girón', ciudad:'Bucaramanga', telefono:'607 6500000', email:'contacto@vitelsa.com', sitioWeb:'www.vitelsa.com', plan:'Personalizado', colorPDF:'#2b5fae', prefijoOT:'OT-', prefijoCompras:'F0-010-', protegerQR:true, pinQR:'1234' },
+    { id:'co2', nombre:'VITELSA - MEDELLÍN', nit:'890.456.123-2', direccion:'Cra 48 # 32-10', ciudad:'Medellín', telefono:'604 6000000', email:'medellin@vitelsa.com', sitioWeb:'www.vitelsa.com', plan:'Profesional', colorPDF:'#2b5fae', prefijoOT:'OT-', prefijoCompras:'F0-010-', protegerQR:false, pinQR:'' },
+    { id:'co3', nombre:'COLBEEF', nit:'900.112.330-5', direccion:'Zona Franca, Lote 4', ciudad:'Bucaramanga', telefono:'607 6700000', email:'mantenimiento@colbeef.com', sitioWeb:'www.colbeef.com', plan:'Empresarial', colorPDF:'#c2703d', prefijoOT:'OT-', prefijoCompras:'SC-', protegerQR:true, pinQR:'5577' },
+  ];
+  const users = [
+    { id:'u1', nombre:'Ing. Cristancho', correo:'jocristanchool@gmail.com', cedula:'91.234.567', memberships:[{companyId:'co1',rol:'ADMINISTRADOR',estado:'activo'},{companyId:'co2',rol:'DIRECTIVO',estado:'activo'}] },
+    { id:'u2', nombre:'Miguel Pardo', correo:'miguel.pardo@vitelsa.com', cedula:'13.456.789', memberships:[{companyId:'co1',rol:'TECNICO',estado:'activo'}] },
+    { id:'u3', nombre:'Julián Rojas', correo:'julian.rojas@vitelsa.com', cedula:'13.456.900', memberships:[{companyId:'co1',rol:'TECNICO',estado:'activo'}] },
+    { id:'u4', nombre:'Laura Niño', correo:'laura.nino@vitelsa.com', cedula:'63.221.456', memberships:[{companyId:'co1',rol:'SUPERVISOR',estado:'activo'}] },
+    { id:'u5', nombre:'Carlos Peña', correo:'carlos.pena@vitelsa.com', cedula:'13.900.112', memberships:[{companyId:'co1',rol:'ALMACEN',estado:'pendiente'}] },
+    { id:'u6', nombre:'Andrea Suárez', correo:'andrea.suarez@colbeef.com', cedula:'63.556.220', memberships:[{companyId:'co3',rol:'PLANEADOR',estado:'activo'}] },
+  ];
+  const zonas1 = ['CARPINTERÍA','PRODUCCIÓN','REFRIGERACIÓN','ALMACÉN GENERAL'];
+  const assets_co1 = [
+    { id:'a1', companyId:'co1', tipo:'equipo', codigo:'HF-01', nombre:'TANQUE HIDROFLO Nº1', descripcion:'Tanque de presurización hidráulica línea 1', tipoEquipo:'SISTEMA NEUMÁTICO / HIDRÁULICO', criticidad:'CRÍTICO', estado:'ACTIVO', ubicacionFisica:'Cuarto de bombas', zona:'PRODUCCIÓN', horasOperacionSemana:112, equipoPadreId:null, marca:'Pedrollo', modelo:'HF-500', numeroSerie:'PD-2291', anioInstalacion:'2021-03-01', capacidad:'5 HP', proveedor:{nombre:'Hidro Insumos SAS', telefono:'300 555 1212'}, fotos:[], documentos:[], camposAdicionales:{} },
+    { id:'a2', companyId:'co1', tipo:'equipo', codigo:'LH-01', nombre:'LAVADORA HORIZONTAL LNG', descripcion:'Lavadora industrial horizontal', tipoEquipo:'EQUIPO MECÁNICO', criticidad:'IMPORTANTE', estado:'ACTIVO', ubicacionFisica:'Planta 1 - nave B', zona:'PRODUCCIÓN', horasOperacionSemana:96, equipoPadreId:null, marca:'Primus', modelo:'LNG-180', numeroSerie:'PX-7781', anioInstalacion:'2019-06-15', capacidad:'20 TR', proveedor:{nombre:'Lavamaq', telefono:'300 222 4455'}, fotos:[], documentos:[], camposAdicionales:{} },
+    { id:'a3', companyId:'co1', tipo:'equipo', codigo:'HF-02', nombre:'TANQUE HIDROFLO Nº2', descripcion:'Hijo de HF-01, respaldo de presión', tipoEquipo:'SISTEMA NEUMÁTICO / HIDRÁULICO', criticidad:'IMPORTANTE', estado:'FUERA DE SERVICIO', ubicacionFisica:'Cuarto de bombas', zona:'PRODUCCIÓN', horasOperacionSemana:0, equipoPadreId:'a1', marca:'Pedrollo', modelo:'HF-500', numeroSerie:'PD-2292', anioInstalacion:'2021-03-01', capacidad:'5 HP', proveedor:{nombre:'Hidro Insumos SAS', telefono:'300 555 1212'}, fotos:[], documentos:[], camposAdicionales:{} },
+    { id:'a4', companyId:'co1', tipo:'equipo', codigo:'CMP-04', nombre:'COMPRESOR TORNILLO 20HP', descripcion:'Compresor de aire para línea neumática', tipoEquipo:'SISTEMA NEUMÁTICO / HIDRÁULICO', criticidad:'CRÍTICO', estado:'ACTIVO', ubicacionFisica:'Sala de compresores', zona:'PRODUCCIÓN', horasOperacionSemana:140, equipoPadreId:null, marca:'Atlas Copco', modelo:'GA22', numeroSerie:'AC-55210', anioInstalacion:'2018-01-10', capacidad:'20 HP', proveedor:{nombre:'Atlas Copco Colombia', telefono:'601 744 0000'}, fotos:[], documentos:[], camposAdicionales:{} },
+    { id:'a5', companyId:'co1', tipo:'equipo', codigo:'SIE-10', nombre:'SIERRA CIRCULAR DE BANCO', descripcion:'Sierra para corte de madera', tipoEquipo:'HERRAMIENTA / INSTRUMENTO', criticidad:'NORMAL', estado:'ACTIVO', ubicacionFisica:'Taller carpintería', zona:'CARPINTERÍA', horasOperacionSemana:40, equipoPadreId:null, marca:'Makita', modelo:'2704', numeroSerie:'MK-8810', anioInstalacion:'2022-09-20', capacidad:'1.6 HP', proveedor:{nombre:'Ferretería Industrial', telefono:'300 888 9900'}, fotos:[], documentos:[], camposAdicionales:{} },
+    { id:'a6', companyId:'co1', tipo:'equipo', codigo:'REF-02', nombre:'UNIDAD DE REFRIGERACIÓN CUARTO FRÍO', descripcion:'Unidad condensadora cuarto frío #2', tipoEquipo:'SISTEMA DE REFRIGERACIÓN', criticidad:'CRÍTICO', estado:'EN REPARACIÓN', ubicacionFisica:'Cuarto frío 2', zona:'REFRIGERACIÓN', horasOperacionSemana:168, equipoPadreId:null, marca:'Bitzer', modelo:'4VES-6Y', numeroSerie:'BZ-99821', anioInstalacion:'2017-11-05', capacidad:'500 kg', proveedor:{nombre:'Frío Andino', telefono:'300 410 7788'}, fotos:[], documentos:[], camposAdicionales:{} },
+    { id:'inm1', companyId:'co1', tipo:'inmueble', codigo:'INM-01', nombre:'BODEGA PRINCIPAL', descripcion:'Bodega de insumos y repuestos', zona:'ALMACÉN GENERAL', estado:'ACTIVO', camposAdicionales:{} },
+    { id:'inm2', companyId:'co1', tipo:'inmueble', codigo:'INM-02', nombre:'OFICINAS ADMINISTRATIVAS', descripcion:'Edificio administrativo', zona:'PRODUCCIÓN', estado:'ACTIVO', camposAdicionales:{} },
+  ];
+  const assets_co3 = [
+    { id:'b1', companyId:'co3', tipo:'equipo', codigo:'CO-01', nombre:'CÁMARA DE CONGELACIÓN 1', descripcion:'Cámara de congelación rápida', tipoEquipo:'SISTEMA DE REFRIGERACIÓN', criticidad:'CRÍTICO', estado:'ACTIVO', ubicacionFisica:'Planta congelados', zona:'REFRIGERACIÓN', horasOperacionSemana:168, equipoPadreId:null, marca:'Bitzer', modelo:'6FE-50', numeroSerie:'BZ-10233', anioInstalacion:'2020-02-01', capacidad:'10 TR', proveedor:{nombre:'Frío Andino', telefono:'300 410 7788'}, fotos:[], documentos:[], camposAdicionales:{} },
+  ];
+  const assets = assets_co1.concat(assets_co3);
+
+  const requests = [
+    { id:'r1', companyId:'co1', consecutivo:48, titulo:'Fuga en tanque hidroflo', descripcion:'Se observa fuga de agua en la base del tanque HF-01', area:'Producción', urgencia:'Alta', assetId:'a1', reportadoPor:'Miguel Pardo', estado:'Pendiente', fechaCreacion: todayISO(), fechaCierre:null },
+    { id:'r2', companyId:'co1', consecutivo:47, titulo:'Ruido anormal compresor', descripcion:'El compresor CMP-04 genera un ruido metálico intermitente', area:'Producción', urgencia:'Media', assetId:'a4', reportadoPor:'Julián Rojas', estado:'Atendida', fechaCreacion:'2026-10-18', fechaCierre:null },
+    { id:'r3', companyId:'co1', consecutivo:46, titulo:'Sierra no enciende', descripcion:'La sierra circular no responde al pulsador de encendido', area:'Carpintería', urgencia:'Baja', assetId:'a5', reportadoPor:'Laura Niño', estado:'Cerrada', fechaCreacion:'2026-10-10', fechaCierre:'2026-10-12' },
+    { id:'r4', companyId:'co1', consecutivo:45, titulo:'Solicitud duplicada', descripcion:'Reporte duplicado del compresor', area:'Producción', urgencia:'Baja', assetId:'a4', reportadoPor:'Julián Rojas', estado:'Cancelada', fechaCreacion:'2026-10-09', fechaCierre:null },
+  ];
+
+  const workOrders = [
+    { id:'ot1', companyId:'co1', consecutivo:'OT-0000001247', titulo:'Plan Mensual LH-01 — LAVADORA HORIZONTAL LNG', tipoMtto:'Preventivo', prioridad:'Media', tipoActivo:'equipo', assetIds:['a2'], planOrigenId:null, rutinaOrigenId:null, actividades:[{texto:'PM-Lubricación de rodamientos',completada:false},{texto:'PM-Limpieza del sistema de drenaje',completada:false}], responsable:'Miguel Pardo', fechaProgramada: todayISO(), fechaLimite:null, turno:'Mañana', observacionesAdmin:'', estado:'PENDIENTE' },
+    { id:'ot2', companyId:'co1', consecutivo:'OT-0000001246', titulo:'Rutina Semanal HF-01 — TANQUE HIDROFLO Nº1', tipoMtto:'Inspección', prioridad:'Alta', tipoActivo:'equipo', assetIds:['a1'], planOrigenId:null, rutinaOrigenId:null, actividades:[{texto:'Revisar presión de línea',completada:true},{texto:'Inspeccionar sellos y empaques',completada:true}], responsable:'Julián Rojas', fechaProgramada:'2026-10-20', fechaLimite:null, turno:'Tarde', observacionesAdmin:'', estado:'REALIZADA' },
+    { id:'ot3', companyId:'co1', consecutivo:'OT-0000001245', titulo:'Correctivo CMP-04 — COMPRESOR TORNILLO 20HP', tipoMtto:'Correctivo', prioridad:'Alta', tipoActivo:'equipo', assetIds:['a4'], planOrigenId:null, rutinaOrigenId:null, actividades:[{texto:'Diagnosticar origen del ruido',completada:false},{texto:'Cambiar rodamiento si aplica',completada:false}], responsable:'Miguel Pardo', fechaProgramada: todayISO(), fechaLimite:null, turno:'Mañana', observacionesAdmin:'Generada desde Solicitud #47', estado:'PENDIENTE' },
+  ];
+
+  const maintenanceLogs = [
+    { id:'reg1', companyId:'co1', consecutivo:'REG-0000001264', otId:'ot2', assetId:'a1', fecha:'2026-10-20', hora:'14:10', tipoActividad:'Inspección', horasInvertidas:0, minutosInvertidos:15, requirioInsumo:'No', acompanante:'No', observaciones:'Presión dentro de rango, sin novedades', firmaTecnico:true, supervisorNombre:'Laura Niño', firmaSupervisor:true, tiempoParoMin:0, fuenteImportacion:null },
+  ];
+
+  const supportActivities = [
+    { id:'sa1', companyId:'co1', fecha:'2026-10-19', hora:'09:00', tipoActividad:'Capacitación', tipoMtto:'Apoyo', assetId:null, descripcion:'Inducción de seguridad a nuevo técnico', observaciones:'', horas:1, minutos:30 },
+  ];
+
+  const purchaseRequests = [
+    { id:'pc1', companyId:'co1', consecutivo:'F0-010-000080', tipo:'repuesto_insumo', items:[{descripcion:'Rodamiento SKF 6205',cantidad:2,unidad:'UND',referencia:'6205-2RS'}], prioridad:'URGENTE', tipoCompra:'NACIONAL', categoria:'Ferretería', assetCentro:'11G77 - CONSUMIBLES MANTENIMIENTO', justificacion:'Reemplazo preventivo compresor CMP-04', estado:'Pendiente', solicitante:'Miguel Pardo', fechaCreacion: todayISO(), ultimoCambio: todayISO(), responsableActual:'Carlos Peña' },
+    { id:'pc2', companyId:'co1', consecutivo:'F0-010-000079', tipo:'servicio', items:[{descripcion:'Mantenimiento especializado unidad de refrigeración',cantidad:1,unidad:'SERVICIO',referencia:''}], prioridad:'IMPORTANTE', tipoCompra:'NACIONAL', categoria:'Servicio técnico', assetCentro:'REF-02', justificacion:'Falla mayor cuarto frío 2', estado:'Por autorizar en SAP', solicitante:'Laura Niño', fechaCreacion:'2026-10-17', ultimoCambio:'2026-10-19', responsableActual:'Carlos Peña' },
+    { id:'pc3', companyId:'co1', consecutivo:'F0-010-000078', tipo:'repuesto_insumo', items:[{descripcion:'Correa transmisión A-45',cantidad:4,unidad:'UND',referencia:'A45'}], prioridad:'NORMAL', tipoCompra:'IMPORTACIÓN', categoria:'Repuestos', assetCentro:'CMP-04', justificacion:'Stock de seguridad', estado:'Completada', solicitante:'Carlos Peña', fechaCreacion:'2026-09-28', ultimoCambio:'2026-10-05', responsableActual:'Carlos Peña' },
+  ];
+
+  const meters = [
+    { id:'me1', companyId:'co1', nombre:'Horómetro CMP-04', unidad:'horas' },
+    { id:'me2', companyId:'co1', nombre:'Contador energía Planta 1', unidad:'kWh' },
+  ];
+  const meterReadings = [
+    { id:'mr1', companyId:'co1', meterId:'me1', fecha: todayISO(), hora:'08:00', assetId:'a4', observaciones:'Lectura rutinaria', fotos:[] },
+    { id:'mr2', companyId:'co1', meterId:'me1', fecha:'2026-10-17', hora:'08:00', assetId:'a4', observaciones:'', fotos:[] },
+  ];
+
+  const maintenancePlans = [
+    { id:'pl1', companyId:'co1', nombre:'Plan Mensual Lavadoras', tipoMtto:'Preventivo', prioridad:'Media', descripcion:'Mantenimiento mensual integral de lavadoras horizontales', tipoActivo:'equipo', assetIds:['a2'], rutinaBaseIds:['ru1'], actividades:[{texto:'PM-Lubricación de rodamientos',completada:false},{texto:'PM-Limpieza del sistema de drenaje',completada:false},{texto:'Revisión de bandas y poleas',completada:false}], frecuencia:'Mensual', duracionEstimadaMin:90, fechaInicio:'2026-01-05', requiereParo:false, disparadorHoras:false, responsable:'Miguel Pardo', recursos:'Grasa industrial, kit de limpieza', estado:'Activo' },
+    { id:'pl2', companyId:'co1', nombre:'Plan Trimestral Compresores', tipoMtto:'Preventivo', prioridad:'Alta', descripcion:'Cambio de filtros y revisión general de compresores', tipoActivo:'equipo', assetIds:['a4'], rutinaBaseIds:[], actividades:[{texto:'Cambio de filtro de aire',completada:false},{texto:'Cambio de filtro de aceite',completada:false},{texto:'Revisión de presostatos',completada:false}], frecuencia:'Trimestral', duracionEstimadaMin:120, fechaInicio:'2026-02-01', requiereParo:true, disparadorHoras:true, responsable:'Miguel Pardo', recursos:'Filtros OEM, aceite sintético', estado:'Activo' },
+  ];
+
+  const maintenanceRoutines = [
+    { id:'ru1', companyId:'co1', nombre:'Rutina Semanal Hidroflo', tipoMtto:'Inspección', prioridad:'Alta', frecuencia:'Semanal', duracionEstimadaMin:15, fechaInicioCiclo:'2026-01-05', tipoActivo:'equipo', assetIds:['a1','a3'], actividades:[{texto:'Revisar presión de línea',completada:false},{texto:'Inspeccionar sellos y empaques',completada:false}], instrucciones:'Usar guantes dieléctricos. No operar si hay fuga visible.' },
+    { id:'ru2', companyId:'co1', nombre:'Inspección Diaria Compresores', tipoMtto:'Inspección', prioridad:'Media', frecuencia:'Diaria', duracionEstimadaMin:10, fechaInicioCiclo:'2026-01-05', tipoActivo:'equipo', assetIds:['a4'], actividades:[{texto:'Verificar nivel de aceite',completada:false},{texto:'Escuchar ruidos anormales',completada:false}], instrucciones:'Reportar cualquier vibración inusual de inmediato.' },
+  ];
+
+  const scheduleTemplates = [
+    { id:'st1', companyId:'co1', nombre:'Programación Normal', descripcion:'Inspecciones semanales — distribución normal de equipos para semanas sin paros programados. Aplica de lunes a sábado, dos turnos.', estado:'activa', dias:6, asignaciones:41 },
+  ];
+
+  const staffSchedule = {
+    co1: {
+      semanaInicio:'2026-10-18', semanaFin:'2026-10-24',
+      mañana:[ {userId:'u2',nombre:'Miguel Pardo',rol:'TECNICO',horario:'06:00–13:00',nota:''}, {userId:'u3',nombre:'Julián Rojas',rol:'TECNICO',horario:'06:00–13:00',nota:'Pasa al turno de la mañana (próxima semana sigue aquí)'} ],
+      tarde:[ {userId:'u4',nombre:'Laura Niño',rol:'SUPERVISOR',horario:'13:00–20:00',nota:''} ],
+      noche:[],
+      personalizado:[],
+      descanso:[ {userId:'u3',nombre:'Julián Rojas',rol:'TECNICO',horario:'—',nota:'Incapacitado hasta el 24 de oct'} ],
+    }
+  };
+
+  const notes = [
+    { id:'n1', companyId:'co1', userId:'u1', titulo:'Revisar cotización repuestos CMP-04', contenido:'Confirmar con Almacén el estado de la OC F0-010-000080', estado:'pendiente' },
+    { id:'n2', companyId:'co1', userId:'u1', titulo:'Preparar indicadores de octubre', contenido:'Falta ingresar costo de insumos y energía del mes', estado:'en_curso' },
+  ];
+
+  const roles = {};
+  ['co1','co2','co3'].forEach(cid=>{ roles[cid] = {}; ROLES.forEach(r=> roles[cid][r] = defaultPermsForRole(r)); });
+
+  const kpiMonthly = {
+    co1: { '2026-10': {
+      mtbf: 182, mttr: 1.8, confiabilidad: 94, disponibilidad: 97,
+      totalRegistros: 36, mantosPreventivos: 21, mantosCorrectivos: 9, numParadas: 4, tiempoImproductivo: 7.4,
+      fallasPorTipo: { electrica:22, mecanica:48, hidraulica:20, otra:10 },
+      distribucionActividad: { inspeccion:35, preventivo:30, correctivo:25, mejora:10 },
+      hop: 4120, costoTotalMtto: 8600000, costoInsumos: 2100000, costoExternos: 1500000, energia: 18400, toneladas: 310,
+      publicado: false,
+    }}
+  };
+
+  const monthlyHOP = {
+    co1: { '2026-10': { confirmado:false, porEquipo:{
+      a1:{calc:186, plan:186, real:150}, a2:{calc:96,plan:96,real:88}, a4:{calc:140,plan:140,real:140}, a5:{calc:40,plan:40,real:12}, a6:{calc:168,plan:168,real:40},
+    } } }
+  };
+
+  const historicalRecords = [
+    { id:'hr1', companyId:'co1', fecha:'2026-03-12', consecutivo:1102, tipo:'CORRECTIVO', asset:'HF-01 — TANQUE HIDROFLO Nº1', descripcion:'Cambio de sello mecánico por fuga', zona:'PRODUCCIÓN', tecnico:'Miguel Pardo', horasInvertidas:2, tiempoParo:'1.5 h', insumos:'Sello mecánico, grasa', observaciones:'Repuesto en stock', archivoOrigen:'HISTORIAL REGISTROS 2026.xlsx' },
+    { id:'hr2', companyId:'co1', fecha:'2026-02-20', consecutivo:1098, tipo:'PREVENTIVO', asset:'LH-01 — LAVADORA HORIZONTAL LNG', descripcion:'Lubricación programada de rodamientos', zona:'PRODUCCIÓN', tecnico:'Julián Rojas', horasInvertidas:1, tiempoParo:'0 h', insumos:'Grasa industrial', observaciones:'', archivoOrigen:'HISTORIAL REGISTROS 2026.xlsx' },
+    { id:'hr3', companyId:'co1', fecha:'2026-01-30', consecutivo:1090, tipo:'INSPECCIÓN', asset:'CMP-04 — COMPRESOR TORNILLO 20HP', descripcion:'Inspección visual trimestral', zona:'PRODUCCIÓN', tecnico:'Miguel Pardo', horasInvertidas:0.5, tiempoParo:'0 h', insumos:'—', observaciones:'Sin novedades', archivoOrigen:'HISTORIAL REGISTROS 2026.xlsx' },
+  ];
+
+  return { companies, users, assets, requests, workOrders, maintenanceLogs, supportActivities, purchaseRequests,
+    meters, meterReadings, maintenancePlans, maintenanceRoutines, scheduleTemplates, staffSchedule, notes, roles,
+    kpiMonthly, monthlyHOP, historicalRecords };
+}
+
+let DB;
+function loadDB(){
+  try{
+    const raw = localStorage.getItem('mantexDemoDB_v1');
+    if(raw){ DB = JSON.parse(raw); return; }
+  }catch(e){}
+  DB = seedDB();
+}
+function saveDB(){
+  try{ localStorage.setItem('mantexDemoDB_v1', JSON.stringify(DB)); }catch(e){}
+}
+function resetDB(){
+  try{ localStorage.removeItem('mantexDemoDB_v1'); }catch(e){}
+  DB = seedDB(); session.companyId=null; session.view='companies'; render();
+  toast('Datos de demostración restablecidos');
+}
+
+/* ---------------- sesión / navegación ---------------- */
+let session = { userId:'u1', companyId:null, role:null, view:'login', params:{}, stack:[] };
+function curCompany(){ return DB.companies.find(c=>c.id===session.companyId); }
+function curRole(){ return session.role; }
+function hasPerm(perm){ if(!session.companyId||!session.role) return false; const r=DB.roles[session.companyId]&&DB.roles[session.companyId][session.role]; return r? !!r[perm] : false; }
+function companyColl(name){ return DB[name].filter(x=>x.companyId===session.companyId); }
+function navigate(view, params){ session.stack.push({view:session.view, params:session.params}); session.view=view; session.params=Object.assign({}, params||{}); closeOverlay(); render(); }
+function goBack(){ const p=session.stack.pop(); if(p){session.view=p.view; session.params=p.params;} else {session.view='home'; session.params={};} closeOverlay(); render(); }
+function goHome(){ session.stack=[]; session.view='home'; session.params={}; closeOverlay(); render(); }
+
+/* ---------------- opciones dinámicas ---------------- */
+function assetOptions(onlyTipo){
+  return companyColl('assets').filter(a=>!onlyTipo||a.tipo===onlyTipo).map(a=>`${a.codigo} — ${a.nombre}`);
+}
+function tecnicoOptions(){
+  return DB.users.filter(u=>u.memberships.some(m=>m.companyId===session.companyId)).map(u=>u.nombre);
+}
+function routineOptions(){ return companyColl('maintenanceRoutines').map(r=>r.nombre); }
+function planOptions(){ return companyColl('maintenancePlans').map(p=>p.nombre); }
+
+/* ---------------- definición de módulos (CRUD genérico) ---------------- */
+const MODULES = {};
+function defMod(def){ MODULES[def.key]=def; return def; }
+
+defMod({ key:'solicitudes', label:'Solicitudes', badge:'SOL', plan:'basico', coll:'requests',
+  fields:[
+    {key:'titulo',label:'Título',type:'text',required:true},
+    {key:'descripcion',label:'Descripción',type:'textarea',required:true},
+    {key:'area',label:'Área / Departamento',type:'text',required:true},
+    {key:'urgencia',label:'Urgencia',type:'chips',options:['Alta','Media','Baja'],default:'Media',required:true},
+    {key:'equipo',label:'Equipo relacionado (opcional)',type:'select',placeholder:'Ninguno',optionsFn:()=>assetOptions()},
+  ],
+  statusField:'estado', statuses:['Pendiente','Atendida','Cerrada','Cancelada'], defaultStatus:'Pendiente',
+  cardTitle:it=>`#${it.consecutivo} · ${it.titulo}`,
+  cardSub:it=>`${it.area} · reportó ${it.reportadoPor||'—'} · ${fmtDate(it.fechaCreacion)}`,
+  tags:it=>[badgeFor(it.urgencia,{Alta:'bad',Media:'warn',Baja:'acc'}), statusBadge(it.estado,{Pendiente:'warn',Atendida:'acc',Cerrada:'ok',Cancelada:'bad'})],
+  rowActions:it=>{
+    const a=[];
+    if(it.estado==='Pendiente'){ a.push(actBtn('Atender','atender')); a.push(actBtn('Cancelar','cancelar','danger')); }
+    if(it.estado==='Atendida'){ a.push(actBtn('Cerrar','cerrar')); }
+    return a;
+  },
+  onAction:(it,act)=>{
+    if(act==='atender') it.estado='Atendida';
+    if(act==='cancelar') it.estado='Cancelada';
+    if(act==='cerrar'){ it.estado='Cerrada'; it.fechaCierre=todayISO(); }
+  },
+  onCreate:(data)=>{ data.consecutivo = Math.max(0,...companyColl('requests').map(x=>x.consecutivo||0))+1; data.estado='Pendiente'; data.reportadoPor='Ing. Cristancho'; data.fechaCreacion=todayISO(); data.fechaCierre=null; },
+});
+
+defMod({ key:'activos', label:'Equipos / Inmuebles', badge:'EQP', plan:'basico', coll:'assets',
+  fields:[
+    {key:'tipo',label:'Tipo de activo',type:'chips',options:['equipo','inmueble'],default:'equipo',required:true},
+    {key:'codigo',label:'Código',type:'text',required:true},
+    {key:'nombre',label:'Nombre',type:'text',required:true},
+    {key:'descripcion',label:'Descripción / Función',type:'textarea'},
+    {key:'tipoEquipo',label:'Tipo de equipo',type:'select',options:['EQUIPO MECÁNICO','EQUIPO ELÉCTRICO','EQUIPO ELECTRÓNICO','SISTEMA DE REFRIGERACIÓN','SISTEMA NEUMÁTICO / HIDRÁULICO','EQUIPO DE CÓMPUTO','VEHÍCULO / TRANSPORTE','HERRAMIENTA / INSTRUMENTO','OTRO']},
+    {key:'criticidad',label:'Criticidad',type:'select',options:['CRÍTICO','IMPORTANTE','NORMAL'],default:'IMPORTANTE'},
+    {key:'estado',label:'Estado',type:'select',options:['ACTIVO','FUERA DE SERVICIO','EN REPARACIÓN'],default:'ACTIVO'},
+    {key:'ubicacionFisica',label:'Ubicación física',type:'text'},
+    {key:'zona',label:'Zona o área',type:'text',required:true},
+    {key:'horasOperacionSemana',label:'Horas de operación / semana',type:'number'},
+    {key:'marca',label:'Marca / Fabricante',type:'text'},
+    {key:'modelo',label:'Modelo',type:'text'},
+    {key:'numeroSerie',label:'Número de serie',type:'text'},
+    {key:'capacidad',label:'Capacidad / Potencia',type:'text',placeholder:'ej. 5 HP, 20 TR, 500 kg'},
+  ],
+  cardTitle:it=>`${it.codigo} — ${it.nombre}`,
+  cardSub:it=>`${it.tipo==='equipo'?'Equipo':'Inmueble'} · ${it.zona||'—'}${it.equipoPadreId?' · hijo de otro activo':''}`,
+  tags:it=>[badgeFor(it.tipo==='equipo'?'EQUIPO':'INMUEBLE','acc'), statusBadge(it.estado,{ACTIVO:'ok','FUERA DE SERVICIO':'bad','EN REPARACIÓN':'warn'})],
+  extraRowActions:it=>`<button class="btn sm" data-qr="${it.id}">QR</button><button class="btn sm" data-hoja="${it.id}">Hoja de vida</button>`,
+  onCreate:(data)=>{ data.fotos=[]; data.documentos=[]; data.camposAdicionales={}; data.equipoPadreId=data.equipoPadreId||null; },
+});
+
+defMod({ key:'mantenimiento', label:'Registrar Mantenimiento', badge:'MTT', plan:'profesional', coll:'maintenanceLogs', noEdit:true,
+  fields:[
+    {key:'equipo',label:'Equipo / Inmueble',type:'select',required:true,optionsFn:()=>assetOptions()},
+    {key:'fecha',label:'Fecha',type:'date',required:true,default:todayISO()},
+    {key:'hora',label:'Hora',type:'time',required:true,default:nowHHMM()},
+    {key:'tipoActividad',label:'Tipo de actividad',type:'select',required:true,options:['Preventivo','Correctivo','Inspección','Mejora']},
+    {key:'horasInvertidas',label:'Horas invertidas',type:'number',default:0},
+    {key:'minutosInvertidos',label:'Minutos',type:'number',default:15},
+    {key:'requirioInsumo',label:'¿Se requirió insumo o repuesto?',type:'select',options:['Sí','No'],default:'No'},
+    {key:'acompanante',label:'¿Alguien lo acompañó?',type:'select',options:['Sí','No'],default:'No'},
+    {key:'observaciones',label:'Observaciones',type:'textarea',required:true},
+    {key:'firmaTecnico',label:'Firma del técnico',type:'sign'},
+    {key:'supervisorNombre',label:'Nombre del supervisor (opcional)',type:'text'},
+    {key:'firmaSupervisor',label:'Firma del supervisor',type:'sign'},
+  ],
+  cardTitle:it=>`${it.consecutivo} · ${it.equipo||'—'}`,
+  cardSub:it=>`${it.tipoActividad} · ${fmtDate(it.fecha)} ${it.hora||''} · ${it.horasInvertidas||0}h ${it.minutosInvertidos||0}min`,
+  tags:it=>[badgeFor(it.tipoActividad,'acc')],
+  onCreate:(data)=>{ data.consecutivo='REG-'+String(1000000+companyColl('maintenanceLogs').length+1); data.tiempoParoMin=0; },
+});
+
+defMod({ key:'soporte', label:'Actividad de Soporte', badge:'SUP', plan:'basico', coll:'supportActivities',
+  fields:[
+    {key:'fecha',label:'Fecha',type:'date',required:true,default:todayISO()},
+    {key:'hora',label:'Hora',type:'time',required:true,default:nowHHMM()},
+    {key:'tipoActividad',label:'Tipo de actividad',type:'select',required:true,options:['Capacitación','Reunión','Acompañamiento','Administrativo']},
+    {key:'tipoMtto',label:'Tipo de mantenimiento',type:'select',options:['Apoyo'],default:'Apoyo'},
+    {key:'equipo',label:'Equipo / Inmueble (opcional)',type:'select',placeholder:'Ninguno',optionsFn:()=>assetOptions()},
+    {key:'descripcion',label:'¿Qué hiciste?',type:'textarea',required:true},
+    {key:'observaciones',label:'Observaciones adicionales',type:'textarea'},
+    {key:'horas',label:'Horas',type:'number',default:0},
+    {key:'minutos',label:'Minutos',type:'number',default:0},
+  ],
+  cardTitle:it=>it.tipoActividad,
+  cardSub:it=>`${fmtDate(it.fecha)} ${it.hora||''} · ${it.horas||0}h ${it.minutos||0}min · ${it.descripcion||''}`,
+  note:'Estas horas cuentan en tu control de tiempo pero NO afectan los KPIs de equipos.',
+});
+
+defMod({ key:'ot', label:'Órdenes de Trabajo', badge:'OT', plan:'profesional', coll:'workOrders',
+  fields:[
+    {key:'titulo',label:'Título de la OT',type:'text',required:true},
+    {key:'tipoMtto',label:'Tipo de mantenimiento',type:'select',required:true,options:['Preventivo','Inspección','Correctivo']},
+    {key:'prioridad',label:'Prioridad',type:'chips',options:['Alta','Media','Baja'],default:'Media',required:true},
+    {key:'tipoActivo',label:'Tipo de activo',type:'select',options:['equipo','inmueble'],default:'equipo'},
+    {key:'equipo',label:'Equipo(s)',type:'select',required:true,optionsFn:()=>assetOptions()},
+    {key:'planOrigen',label:'Plan de trabajo vinculado (opcional)',type:'select',placeholder:'Ninguno',optionsFn:()=>planOptions().concat(routineOptions())},
+    {key:'actividadesTexto',label:'Actividades (una por línea)',type:'textarea',required:true,placeholder:'Ej: PM-Lubricación de rodamientos'},
+    {key:'responsable',label:'Perfil responsable',type:'select',required:true,optionsFn:()=>tecnicoOptions()},
+    {key:'fechaProgramada',label:'Fecha programada',type:'date',required:true,default:todayISO()},
+    {key:'fechaLimite',label:'Fecha límite (opcional)',type:'date'},
+    {key:'turno',label:'Turno',type:'select',options:['Mañana','Tarde','Noche'],default:'Mañana'},
+    {key:'observacionesAdmin',label:'Observaciones del administrador',type:'textarea'},
+  ],
+  statusField:'estado', statuses:['PENDIENTE','REALIZADA','CANCELADA','ANULADA','POSPUESTA'], defaultStatus:'PENDIENTE',
+  cardTitle:it=>`${it.consecutivo} — ${it.titulo}`,
+  cardSub:it=>`${it.tipoMtto} · ${it.responsable||'—'} · ${fmtDate(it.fechaProgramada)} · turno ${it.turno||'—'}`,
+  tags:it=>[badgeFor(it.prioridad,{Alta:'bad',Media:'warn',Baja:'acc'}), statusBadge(it.estado,{PENDIENTE:'warn',REALIZADA:'ok',CANCELADA:'bad',ANULADA:'bad',POSPUESTA:'acc'})],
+  rowActions:it=> it.estado==='PENDIENTE' ? [actBtn('Marcar realizada','realizar'), actBtn('Cancelar','cancelar','danger')] : [],
+  onAction:(it,act)=>{ if(act==='realizar') it.estado='REALIZADA'; if(act==='cancelar') it.estado='CANCELADA'; },
+  onCreate:(data)=>{
+    data.consecutivo = 'OT-' + String(1000000+companyColl('workOrders').length+1);
+    data.actividades = (data.actividadesTexto||'').split('\n').map(t=>t.trim()).filter(Boolean).map(t=>({texto:t,completada:false}));
+    delete data.actividadesTexto;
+  },
+  onEditLoad:(it)=>{ it.actividadesTexto = (it.actividades||[]).map(a=>a.texto).join('\n'); },
+  onUpdate:(it,data)=>{ it.actividades = (data.actividadesTexto||'').split('\n').map(t=>t.trim()).filter(Boolean).map(t=>({texto:t,completada:false})); delete data.actividadesTexto; },
+});
+
+defMod({ key:'compras', label:'Solicitudes de Compra', badge:'SC', plan:'empresarial', coll:'purchaseRequests',
+  fields:[
+    {key:'tipo',label:'Tipo',type:'chips',options:['repuesto_insumo','servicio'],default:'repuesto_insumo',required:true},
+    {key:'descripcion1',label:'Qué necesitas',type:'text',required:true},
+    {key:'cantidad',label:'Cantidad',type:'number',default:1},
+    {key:'unidad',label:'Unidad',type:'text',placeholder:'UND, SERVICIO, KG...'},
+    {key:'referencia',label:'Referencia / Código (opcional)',type:'text'},
+    {key:'prioridad',label:'Prioridad',type:'chips',options:['URGENTE','IMPORTANTE','NORMAL'],default:'NORMAL',required:true},
+    {key:'tipoCompra',label:'Tipo de compra',type:'select',options:['NACIONAL','IMPORTACIÓN'],default:'NACIONAL',required:true},
+    {key:'categoria',label:'Categoría',type:'select',options:['Ferretería','Repuestos','Servicio técnico','Otro']},
+    {key:'assetCentro',label:'Equipo / Área destino',type:'select',optionsFn:()=>assetOptions()},
+    {key:'justificacion',label:'Observaciones adicionales',type:'textarea'},
+  ],
+  statusField:'estado',
+  statuses:['Pendiente','Solicitado','En compra','Rechazado','Cerrada','Completada','En espera','Enviada a proveedor','Por autorizar en SAP','Por cotizar','Por pago','Trámite Comercio Exterior','Por aprobación de Gerencia','Pte firmar recibido','Cancelado'],
+  defaultStatus:'Pendiente',
+  cardTitle:it=>`${it.consecutivo} · ${it.items&&it.items[0]?it.items[0].descripcion:'—'}`,
+  cardSub:it=>`${it.tipoCompra} · ${it.categoria||'—'} · ${it.assetCentro||'—'} · solicitó ${it.solicitante}`,
+  tags:it=>[badgeFor(it.prioridad,{URGENTE:'bad',IMPORTANTE:'warn',NORMAL:'acc'}), statusBadge(it.estado, PURCHASE_STATUS_COLORS)],
+  rowActions:it=> PURCHASE_FLOW_NEXT[it.estado] ? [actBtn('Procesar → '+PURCHASE_FLOW_NEXT[it.estado],'procesar'), actBtn('Rechazar','rechazar','danger')] : [],
+  onAction:(it,act)=>{ if(act==='procesar' && PURCHASE_FLOW_NEXT[it.estado]){ it.estado=PURCHASE_FLOW_NEXT[it.estado]; it.ultimoCambio=todayISO(); } if(act==='rechazar'){ it.estado='Rechazado'; it.ultimoCambio=todayISO(); } },
+  onCreate:(data)=>{
+    data.consecutivo = (curCompany().prefijoCompras||'SC-') + String(1000000+companyColl('purchaseRequests').length+1).slice(-6);
+    data.items=[{descripcion:data.descripcion1,cantidad:data.cantidad,unidad:data.unidad,referencia:data.referencia}];
+    delete data.descripcion1; delete data.cantidad; delete data.unidad; delete data.referencia;
+    data.solicitante='Ing. Cristancho'; data.fechaCreacion=todayISO(); data.ultimoCambio=todayISO(); data.responsableActual='Almacén';
+  },
+});
+const PURCHASE_FLOW_NEXT = { 'Pendiente':'Solicitado','Solicitado':'En compra','En compra':'Por cotizar','Por cotizar':'Por autorizar en SAP','Por autorizar en SAP':'Por aprobación de Gerencia','Por aprobación de Gerencia':'Enviada a proveedor','Enviada a proveedor':'Por pago','Por pago':'Pte firmar recibido','Pte firmar recibido':'Completada' };
+const PURCHASE_STATUS_COLORS = { Pendiente:'warn', Solicitado:'warn', 'En compra':'acc', Rechazado:'bad', Cerrada:'ok', Completada:'ok', 'En espera':'warn', Cancelado:'bad' };
+
+defMod({ key:'medidores', label:'Registro de Medidores', badge:'MED', plan:'profesional', coll:'meterReadings',
+  fields:[
+    {key:'meter',label:'Medidor',type:'select',required:true,optionsFn:()=>companyColl('meters').map(m=>m.nombre)},
+    {key:'fecha',label:'Fecha',type:'date',required:true,default:todayISO()},
+    {key:'hora',label:'Hora',type:'time',required:true,default:nowHHMM()},
+    {key:'equipo',label:'Equipo asociado (opcional)',type:'select',placeholder:'Ninguno',optionsFn:()=>assetOptions()},
+    {key:'observaciones',label:'Observaciones',type:'textarea'},
+  ],
+  cardTitle:it=>it.meter,
+  cardSub:it=>`${fmtDate(it.fecha)} ${it.hora||''} · ${it.equipo||'—'}`,
+});
+
+defMod({ key:'historicos', label:'Registros Históricos', badge:'HIS', plan:'empresarial', coll:'historicalRecords', noCreate:true, noEdit:true,
+  fields:[], cardTitle:it=>`${it.consecutivo} · ${it.tipo}`,
+  cardSub:it=>`${it.asset||''} · ${fmtDate(it.fecha)} · ${it.descripcion||''} · fuente: ${it.archivoOrigen||'manual'}`,
+});
+
+defMod({ key:'planes', label:'Planes de Mantenimiento', badge:'PLN', plan:'profemp', coll:'maintenancePlans',
+  fields:[
+    {key:'nombre',label:'Nombre del plan',type:'text',required:true},
+    {key:'tipoMtto',label:'Tipo de mantenimiento',type:'select',required:true,options:['Preventivo','Inspección']},
+    {key:'prioridad',label:'Prioridad',type:'chips',options:['Alta','Media','Baja'],default:'Media',required:true},
+    {key:'descripcion',label:'Descripción',type:'textarea'},
+    {key:'tipoActivo',label:'Tipo de activo',type:'select',options:['equipo','inmueble'],default:'equipo'},
+    {key:'equipo',label:'Activo asociado',type:'select',required:true,optionsFn:()=>assetOptions()},
+    {key:'rutinaBase',label:'Rutina base (opcional)',type:'select',placeholder:'Ninguna',optionsFn:()=>routineOptions()},
+    {key:'actividadesTexto',label:'Actividades del plan (una por línea)',type:'textarea',required:true},
+    {key:'frecuencia',label:'Frecuencia',type:'select',required:true,options:['Mensual','Trimestral','Semestral','Anual']},
+    {key:'duracionEstimadaMin',label:'Duración estimada (min)',type:'number',default:30,min:5},
+    {key:'fechaInicio',label:'Fecha de inicio',type:'date',required:true,default:todayISO()},
+    {key:'requiereParo',label:'¿Requiere paro del equipo?',type:'toggle'},
+    {key:'disparadorHoras',label:'¿Disparador por horas de operación?',type:'toggle'},
+    {key:'responsable',label:'Perfil responsable',type:'select',required:true,optionsFn:()=>tecnicoOptions()},
+    {key:'recursos',label:'Recursos / materiales necesarios',type:'textarea'},
+    {key:'estado',label:'Estado del plan',type:'select',options:['Activo','Inactivo'],default:'Activo'},
+  ],
+  cardTitle:it=>it.nombre,
+  cardSub:it=>`${it.tipoMtto} · ${it.frecuencia} · ${it.equipo||''}`,
+  tags:it=>[statusBadge(it.estado,{Activo:'ok',Inactivo:'bad'})],
+  onCreate:(data)=>{ data.actividades=(data.actividadesTexto||'').split('\n').map(t=>t.trim()).filter(Boolean).map(t=>({texto:t,completada:false})); delete data.actividadesTexto; },
+  onEditLoad:(it)=>{ it.actividadesTexto=(it.actividades||[]).map(a=>a.texto).join('\n'); },
+  onUpdate:(it,data)=>{ it.actividades=(data.actividadesTexto||'').split('\n').map(t=>t.trim()).filter(Boolean).map(t=>({texto:t,completada:false})); delete data.actividadesTexto; },
+});
+
+defMod({ key:'rutinas', label:'Rutinas de Mantenimiento', badge:'RUT', plan:'profemp', coll:'maintenanceRoutines',
+  fields:[
+    {key:'nombre',label:'Nombre de la rutina',type:'text',required:true},
+    {key:'tipoMtto',label:'Tipo de mantenimiento',type:'select',required:true,options:['Preventivo','Inspección']},
+    {key:'prioridad',label:'Prioridad',type:'chips',options:['Alta','Media'],default:'Media'},
+    {key:'frecuencia',label:'Frecuencia',type:'select',options:['Diaria','Semanal','Quincenal'],default:'Semanal'},
+    {key:'duracionEstimadaMin',label:'Duración estimada (min)',type:'number',default:15,min:5},
+    {key:'fechaInicioCiclo',label:'Fecha de inicio del ciclo',type:'date',default:todayISO()},
+    {key:'tipoActivo',label:'Tipo de activo',type:'select',options:['equipo','inmueble'],default:'equipo'},
+    {key:'equipo',label:'Equipo(s) asociado(s)',type:'select',required:true,optionsFn:()=>assetOptions()},
+    {key:'actividadesTexto',label:'Lista de actividades (una por línea)',type:'textarea',required:true},
+    {key:'instrucciones',label:'Instrucciones especiales',type:'textarea',placeholder:'EPP requerido, precauciones, herramientas...'},
+  ],
+  cardTitle:it=>it.nombre,
+  cardSub:it=>`${it.tipoMtto} · ${it.frecuencia} · ${(it.actividades||[]).length} actividades`,
+  onCreate:(data)=>{ data.actividades=(data.actividadesTexto||'').split('\n').map(t=>t.trim()).filter(Boolean).map(t=>({texto:t,completada:false})); delete data.actividadesTexto; },
+  onEditLoad:(it)=>{ it.actividadesTexto=(it.actividades||[]).map(a=>a.texto).join('\n'); },
+  onUpdate:(it,data)=>{ it.actividades=(data.actividadesTexto||'').split('\n').map(t=>t.trim()).filter(Boolean).map(t=>({texto:t,completada:false})); delete data.actividadesTexto; },
+});
+
+defMod({ key:'plantillas', label:'Plantillas de Programa', badge:'PLT', plan:'profemp', coll:'scheduleTemplates',
+  fields:[
+    {key:'nombre',label:'Nombre',type:'text',required:true},
+    {key:'descripcion',label:'Descripción',type:'textarea'},
+    {key:'dias',label:'N° de días configurados',type:'number',default:6},
+    {key:'asignaciones',label:'N° de asignaciones',type:'number',default:0},
+    {key:'estado',label:'Estado',type:'select',options:['activa','inactiva'],default:'activa'},
+  ],
+  cardTitle:it=>it.nombre, cardSub:it=>`${it.dias} días configurados · ${it.asignaciones} asignaciones`,
+  tags:it=> it.estado==='activa' ? [badgeFor('ACTIVA','ok')] : [],
+});
+
+defMod({ key:'notas', label:'Mis Notas', badge:'NOT', plan:'basico', coll:'notes',
+  fields:[
+    {key:'titulo',label:'Título',type:'text',required:true},
+    {key:'contenido',label:'Contenido',type:'textarea'},
+    {key:'estado',label:'Estado',type:'select',options:['pendiente','en_curso','atendida','finalizada'],default:'pendiente'},
+  ],
+  statusField:'estado', statuses:['pendiente','en_curso','atendida','finalizada'], kanban:true,
+  cardTitle:it=>it.titulo, cardSub:it=>it.contenido||'',
+  onCreate:(data)=>{ data.userId=session.userId; },
+});
+
+/* helpers de UI de módulos */
+function badgeFor(text,cls){ if(typeof cls==='object'){ } return `<span class="badge ${typeof cls==='string'?cls:''}">${esc(text||'')}</span>`; }
+function statusBadge(status, map){ return `<span class="badge ${map&&map[status]||''}">${esc(status||'')}</span>`; }
+function actBtn(label, act, cls){ return `<button class="btn sm ${cls||''}" data-modact="${act}">${esc(label)}</button>`; }
+
+/* ---------------- 24 tarjetas del Home ---------------- */
+const HOME_TILES = [
+  {label:'Solicitudes', badge:'SOL', view:'solicitudes', plan:'basico'},
+  {label:'Registrar equipo', badge:'EQP', view:'activos', plan:'basico', params:{autoNew:true, fixedTipo:'equipo'}},
+  {label:'Registrar Inmueble', badge:'INM', view:'activos', plan:'basico', params:{autoNew:true, fixedTipo:'inmueble'}},
+  {label:'Equipos / Inmuebles registrados', badge:'REG', view:'activos', plan:'basico'},
+  {label:'Registrar Mantenimiento', badge:'MTT', view:'mantenimiento', plan:'profesional', params:{autoNew:true}},
+  {label:'Actividad de Soporte', badge:'SUP', view:'soporte', plan:'basico', params:{autoNew:true}},
+  {label:'Órdenes de Trabajo', badge:'OT', view:'ot', plan:'profesional'},
+  {label:'Ver Reportes', badge:'REP', view:'mantenimiento', plan:'profesional'},
+  {label:'Ver Pedidos', badge:'SC', view:'compras', plan:'empresarial'},
+  {label:'Registro de Medidores', badge:'MED', view:'medidores', plan:'profesional'},
+  {label:'Registros Históricos', badge:'HIS', view:'historicos', plan:'empresarial'},
+  {label:'Ajustes', badge:'AJT', view:'ajustes', plan:'basico'},
+  {label:'Configurar Permisos por Rol', badge:'ROL', view:'permisos', plan:'empresarial'},
+  {label:'Aprobación de Usuarios', badge:'USR', view:'aprobacion', plan:'empresarial'},
+  {label:'Indicadores', badge:'KPI', view:'indicadores', plan:'empresarial'},
+  {label:'Prog. Mensual Equipos', badge:'HOP', view:'progmensual', plan:'empresarial'},
+  {label:'Ver Planes de Trabajo', badge:'PLN', view:'planes', plan:'profemp'},
+  {label:'Estado de Mantenimiento', badge:'EDM', view:'estadomtto', plan:'profemp'},
+  {label:'Estado de Rutinas', badge:'EDR', view:'estadorutinas', plan:'profemp'},
+  {label:'Crear planes de Mantenimiento', badge:'PLN+', view:'planes', plan:'profemp', params:{autoNew:true}},
+  {label:'Programación de Personal', badge:'PRG', view:'programacion', plan:'profesional'},
+  {label:'Crear Rutina Mtto', badge:'RUT+', view:'rutinas', plan:'profemp', params:{autoNew:true}},
+  {label:'Plantillas de Programa', badge:'PLT', view:'plantillas', plan:'profemp'},
+  {label:'Mis Notas', badge:'NOT', view:'notas', plan:'basico'},
+];
+
+/* ---------------- render: pantallas de autenticación ---------------- */
+function renderLogin(){
+  $app.innerHTML = `<div class="center-screen gutter"><div class="auth-card">
+    <div class="brandmark">MX</div>
+    <h1>Gestión Integral de Activos</h1>
+    <p class="sub">MANTEX 5.0 — réplica funcional con fines educativos. Cualquier correo y contraseña inician la sesión de demostración.</p>
+    <form id="loginForm">
+      <label class="field"><span class="lbl">Correo electrónico</span><input type="email" name="correo" value="jocristanchool@gmail.com" required></label>
+      <label class="field"><span class="lbl">Contraseña</span><input type="password" name="pass" value="demo1234" required></label>
+      <button class="btn primary" style="width:100%;justify-content:center" type="submit">Iniciar sesión</button>
+    </form>
+    <p class="sub" style="margin-top:14px;margin-bottom:0">¿Datos de la demo desordenados? <button class="btn sm ghost" id="btnReset" type="button" style="padding:0;text-decoration:underline">Restablecer demo</button></p>
+  </div></div>`;
+  document.getElementById('loginForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    session.view='companies'; render();
+  });
+  document.getElementById('btnReset').addEventListener('click', resetDB);
+}
+
+function renderCompanies(){
+  const user = DB.users.find(u=>u.id===session.userId);
+  const rows = user.memberships.map(m=>{
+    const co = DB.companies.find(c=>c.id===m.companyId);
+    const n = DB.assets.filter(a=>a.companyId===co.id);
+    return {co, m, nEq:n.filter(a=>a.tipo==='equipo').length, nInm:n.filter(a=>a.tipo==='inmueble').length};
+  });
+  const total = DB.assets.length;
+  $app.innerHTML = `<div class="center-screen gutter"><div class="company-wrap">
+    <h1>Selecciona la empresa a la que deseas ingresar</h1>
+    ${rows.map(r=>`<button class="co-card" data-gocompany="${r.co.id}" data-role="${r.m.rol}" style="width:100%;text-align:left;border:1px solid var(--line);">
+      <div class="co-avatar">${esc(r.co.nombre[0])}</div>
+      <div class="meta">
+        <div class="nm">${esc(r.co.nombre)}</div>
+        <div class="sub">${esc(r.m.rol)} · ${r.nEq} equipos · ${r.nInm} inmuebles</div>
+      </div>
+      <span class="badge acc">${esc(r.co.plan)}</span>
+    </button>`).join('')}
+    <p style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:14px">Total: ${total} activos en todas tus empresas</p>
+    <div style="text-align:center;margin-top:6px"><button class="btn ghost sm" id="btnLogout">Cerrar sesión</button></div>
+  </div></div>`;
+  $app.querySelectorAll('[data-gocompany]').forEach(b=>b.addEventListener('click', ()=>{
+    session.companyId=b.dataset.gocompany; session.role=b.dataset.role; goHome();
+  }));
+  document.getElementById('btnLogout').addEventListener('click', ()=>{ session.view='login'; session.companyId=null; render(); });
+}
+
+/* ---------------- topbar reutilizable ---------------- */
+function topbarHTML(title, actionsHTML, showBack){
+  return `<div class="topbar">
+    ${showBack!==false ? `<button class="back" data-goback title="Volver">←</button>` : `<span style="width:30px"></span>`}
+    <div class="ttl">${esc(title)}</div>
+    <div class="acts">${actionsHTML||''}</div>
+  </div>`;
+}
+function wireTopbar(){
+  const b = $app.querySelector('[data-goback]'); if(b) b.addEventListener('click', goBack);
+  const h = $app.querySelector('[data-gohome]'); if(h) h.addEventListener('click', goHome);
+}
+
+/* ---------------- Home ---------------- */
+function renderHome(){
+  const co = curCompany();
+  $app.innerHTML = `
+    ${topbarHTML('Inicio', `<button data-gohome title="Cambiar empresa" data-changeco>⇄ Cambiar empresa</button><button data-logout title="Cerrar sesión">⏻</button>`, false)}
+    <div class="home-head">
+      <div class="co-name">${esc(co.nombre)}</div>
+      <div class="co-role">${esc(session.role)} · Plan: ${esc(co.plan)}</div>
+    </div>
+    <div class="home-grid">
+      ${HOME_TILES.map((t,i)=>`<button class="tile plan-${t.plan}" data-tile="${i}">
+        <span class="ic">${esc(t.badge)}</span>
+        <span class="lbl">${esc(t.label)}</span>
+      </button>`).join('')}
+    </div>`;
+  $app.querySelector('[data-changeco]').addEventListener('click', ()=>{ session.view='companies'; render(); });
+  $app.querySelector('[data-logout]').addEventListener('click', ()=>{ session.view='login'; session.companyId=null; render(); });
+  $app.querySelectorAll('[data-tile]').forEach(b=>b.addEventListener('click', ()=>{
+    const t = HOME_TILES[Number(b.dataset.tile)];
+    navigate(t.view, t.params||{});
+  }));
+}
+
+/* ---------------- motor genérico de listado ---------------- */
+function resolveFields(mod){
+  return mod.fields.map(f=> f.optionsFn ? Object.assign({}, f, {options:f.optionsFn()}) : f );
+}
+function renderModuleScreen(modKey, params){
+  const mod = MODULES[modKey];
+  params = params || {};
+  if(!params._q) params._q = '';
+  if(!params._tab) params._tab = mod.statusField ? 'Todos' : (modKey==='activos' ? 'Todos' : null);
+
+  if(mod.kanban){ renderKanbanScreen(mod, params); return; }
+
+  let items = companyColl(mod.coll);
+  if(modKey==='activos' && params.fixedTipo && params._tab==='Todos' && !params._tabTouched){ /* no-op, tab filter below handles */ }
+  if(modKey==='activos'){
+    if(params._tab==='Equipos') items = items.filter(a=>a.tipo==='equipo');
+    else if(params._tab==='Inmuebles') items = items.filter(a=>a.tipo==='inmueble');
+  } else if(mod.statusField && params._tab && params._tab!=='Todos'){
+    items = items.filter(it=>it[mod.statusField]===params._tab);
+  }
+  if(params._q){
+    const q = params._q.toLowerCase();
+    items = items.filter(it=> JSON.stringify(it).toLowerCase().includes(q));
+  }
+  items = items.slice().reverse();
+
+  let tabsHTML = '';
+  if(modKey==='activos'){
+    const all = companyColl('assets');
+    const tabsDef = [['Todos',all.length],['Equipos',all.filter(a=>a.tipo==='equipo').length],['Inmuebles',all.filter(a=>a.tipo==='inmueble').length]];
+    tabsHTML = `<div class="tabs">${tabsDef.map(([l,c])=>`<button class="${params._tab===l?'active':''}" data-tab="${l}">${l} <span class="cnt">${c}</span></button>`).join('')}</div>`;
+  } else if(mod.statusField){
+    const all = companyColl(mod.coll);
+    const tabsDef = [['Todos',all.length]].concat(mod.statuses.map(s=>[s, all.filter(x=>x[mod.statusField]===s).length]));
+    tabsHTML = `<div class="tabs">${tabsDef.map(([l,c])=>`<button class="${params._tab===l?'active':''}" data-tab="${l}">${l} <span class="cnt">${c}</span></button>`).join('')}</div>`;
+  }
+
+  const listHTML = items.length ? `<div class="card-list">${items.map(it=>{
+    const tags = mod.tags ? mod.tags(it).join('') : '';
+    const rowA = mod.rowActions ? mod.rowActions(it).join('') : '';
+    const extraA = mod.extraRowActions ? mod.extraRowActions(it) : '';
+    return `<div class="item-card" data-itemid="${it.id}">
+      <div class="row1">
+        <div><div class="ttl">${esc(mod.cardTitle(it))}</div><div class="sub">${esc(mod.cardSub(it))}</div></div>
+      </div>
+      ${tags?`<div class="tags">${tags}</div>`:''}
+      <div class="acts">
+        ${rowA}
+        ${extraA}
+        ${mod.noEdit?'':`<button class="btn sm" data-edit="${it.id}">Editar</button>`}
+        ${mod.noDelete?'':`<button class="btn sm danger" data-del="${it.id}">Eliminar</button>`}
+      </div>
+    </div>`;
+  }).join('')}</div>` : `<div class="empty-state">Sin registros. ${mod.noCreate?'':'Presiona "+ Nuevo" para crear el primero.'}</div>`;
+
+  const noteHTML = mod.note ? `<div class="badge warn" style="display:block;padding:8px 12px;margin-bottom:12px">${esc(mod.note)}</div>` : '';
+
+  $app.innerHTML = `${topbarHTML(mod.label, mod.noCreate?'':`<button data-new>+ Nuevo</button>`)}
+    <div class="mod-body">
+      <div class="toolbar">
+        <input type="search" placeholder="Buscar en ${esc(mod.label.toLowerCase())}…" value="${esc(params._q)}" data-search>
+      </div>
+      ${tabsHTML}
+      ${noteHTML}
+      ${listHTML}
+    </div>`;
+  wireTopbar();
+  const nb = $app.querySelector('[data-new]'); if(nb) nb.addEventListener('click', ()=>openModForm(modKey,null,params));
+  const sEl = $app.querySelector('[data-search]');
+  sEl.addEventListener('input', ()=>{ params._q = sEl.value; renderModuleScreen(modKey, params); });
+  sEl.focus(); sEl.selectionStart = sEl.selectionEnd = sEl.value.length;
+  $app.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click', ()=>{ params._tab=b.dataset.tab; params._tabTouched=true; renderModuleScreen(modKey, params); }));
+  $app.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click', ()=>openModForm(modKey,b.dataset.edit,params)));
+  $app.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>{
+    openConfirm('Eliminar registro','Esta acción no se puede deshacer en la demostración.','Eliminar','Cancelar', ()=>{
+      DB[mod.coll] = DB[mod.coll].filter(x=>x.id!==b.dataset.del); saveDB(); renderModuleScreen(modKey, params); toast('Registro eliminado');
+    });
+  }));
+  $app.querySelectorAll('[data-modact]').forEach(b=>b.addEventListener('click', (e)=>{
+    const card = e.target.closest('[data-itemid]'); const it = DB[mod.coll].find(x=>x.id===card.dataset.itemid);
+    mod.onAction(it, b.dataset.modact); saveDB(); renderModuleScreen(modKey, params); toast('Estado actualizado');
+  }));
+  $app.querySelectorAll('[data-qr]').forEach(b=>b.addEventListener('click', ()=>toast('Código QR generado (simulado) para el activo')));
+  $app.querySelectorAll('[data-hoja]').forEach(b=>b.addEventListener('click', ()=>toast('Generando hoja de vida (PDF)… (simulado)')));
+
+  if(params.autoNew && !params._autoNewDone){
+    params._autoNewDone = true;
+    openModForm(modKey, null, params);
+  }
+}
+
+function openModForm(modKey, id, listParams){
+  const mod = MODULES[modKey];
+  const isEdit = !!id;
+  let item = isEdit ? DB[mod.coll].find(x=>x.id===id) : {};
+  if(isEdit && mod.onEditLoad){ mod.onEditLoad(item); }
+  const fields = resolveFields(mod);
+  overlayDirty = false;
+  const lockedTipo = !isEdit && listParams && listParams.fixedTipo;
+  openOverlay(`<div class="sheet" onmousedown="event.stopPropagation()">
+    <div class="sheet-head"><h2>${isEdit?'Editar':'Nuevo'} — ${esc(mod.label)}</h2><button class="iconbtn" data-closeform>✕</button></div>
+    <form id="modForm"><div class="sheet-body">
+      ${fields.map(f=>{
+        if(lockedTipo && f.key==='tipo'){ return `<input type="hidden" name="tipo" value="${esc(lockedTipo)}">`; }
+        return fieldHTML(f, item[f.key]);
+      }).join('')}
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn" data-closeform>Cancelar</button>
+      <button type="submit" class="btn primary">${isEdit?'Guardar cambios':'Guardar'}</button>
+    </div></form>
+  </div>`);
+  const sheet = $ov.querySelector('.sheet');
+  wireChips(sheet); wireSign(sheet);
+  sheet.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input', ()=>overlayDirty=true));
+  sheet.querySelectorAll('[data-closeform]').forEach(b=>b.addEventListener('click', ()=>askCloseOverlay()));
+  document.getElementById('modForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const data = readForm(e.target, fields);
+    if(lockedTipo) data.tipo = lockedTipo;
+    if(isEdit){
+      if(mod.onUpdate) mod.onUpdate(item, data);
+      Object.assign(item, data);
+      toast('Cambios guardados');
+    } else {
+      data.id = uid(modKey);
+      data.companyId = session.companyId;
+      if(mod.defaultStatus) data[mod.statusField] = mod.defaultStatus;
+      if(mod.onCreate) mod.onCreate(data);
+      DB[mod.coll].push(data);
+      toast('Registro creado');
+    }
+    overlayDirty = false; saveDB(); closeOverlay();
+    renderModuleScreen(modKey, listParams||{});
+  });
+}
+
+function renderKanbanScreen(mod, params){
+  const items = companyColl(mod.coll);
+  $app.innerHTML = `${topbarHTML(mod.label, `<button data-new>+ Nueva nota</button>`)}
+    <div class="mod-body">
+      ${items.length ? `<div class="kanban">${mod.statuses.map(s=>`
+        <div class="kcol"><h4>${s.replace('_',' ')} <span class="mono" style="color:var(--muted)">(${items.filter(i=>i.estado===s).length})</span></h4>
+        ${items.filter(i=>i.estado===s).map(it=>`<div class="item-card" data-itemid="${it.id}">
+            <div class="ttl">${esc(it.titulo)}</div><div class="sub">${esc(it.contenido||'')}</div>
+            <div class="acts">
+              <select data-statusel="${it.id}" style="width:auto;padding:4px 7px;font-size:12px">${mod.statuses.map(s2=>`<option value="${s2}" ${s2===it.estado?'selected':''}>${s2}</option>`).join('')}</select>
+              <button class="btn sm" data-edit="${it.id}">Editar</button>
+              <button class="btn sm danger" data-del="${it.id}">Eliminar</button>
+            </div></div>`).join('')}
+        </div>`).join('')}</div>`
+      : `<div class="empty-state">Sin notas aún. Presiona + para crear una.</div>` }
+    </div>`;
+  wireTopbar();
+  $app.querySelector('[data-new]').addEventListener('click', ()=>openModForm('notas',null,params));
+  $app.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click', ()=>openModForm('notas',b.dataset.edit,params)));
+  $app.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>{
+    openConfirm('Eliminar nota','Esta acción no se puede deshacer.','Eliminar','Cancelar', ()=>{
+      DB.notes = DB.notes.filter(x=>x.id!==b.dataset.del); saveDB(); renderKanbanScreen(mod,params);
+    });
+  }));
+  $app.querySelectorAll('[data-statusel]').forEach(sel=>sel.addEventListener('change', ()=>{
+    const it = DB.notes.find(x=>x.id===sel.dataset.statusel); it.estado=sel.value; saveDB(); renderKanbanScreen(mod,params);
+  }));
+}
+
+/* ---------------- Ajustes ---------------- */
+const PDF_COLORS = ['#2b5fae','#c2703d','#1f8a53','#b23c3c','#7b3fae','#0e7490','#a9770f','#334155','#9333ea','#0f766e','#b91c1c','#4338ca','#15803d','#1b2430'];
+function renderAjustes(){
+  const co = curCompany();
+  $app.innerHTML = `${topbarHTML('Ajustes')}
+    <div class="mod-body">
+      <form id="ajustesForm">
+        <fieldset class="section"><legend>Información de la empresa</legend>
+          <div class="field-row">
+            <label class="field"><span class="lbl">Nombre</span><input type="text" name="nombre" value="${esc(co.nombre)}" required></label>
+            <label class="field"><span class="lbl">NIT / RUT</span><input type="text" name="nit" value="${esc(co.nit)}"></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span class="lbl">Dirección</span><input type="text" name="direccion" value="${esc(co.direccion)}"></label>
+            <label class="field"><span class="lbl">Ciudad / País</span><input type="text" name="ciudad" value="${esc(co.ciudad)}"></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span class="lbl">Teléfono</span><input type="text" name="telefono" value="${esc(co.telefono)}"></label>
+            <label class="field"><span class="lbl">Email</span><input type="email" name="email" value="${esc(co.email)}"></label>
+          </div>
+          <label class="field"><span class="lbl">Sitio web</span><input type="text" name="sitioWeb" value="${esc(co.sitioWeb)}"></label>
+        </fieldset>
+        <fieldset class="section"><legend>Apariencia en documentos (PDF)</legend>
+          <label class="field"><span class="lbl">Color primario de documentos</span>
+            <div class="chipsel" data-chipfield="colorPDF">${PDF_COLORS.map(c=>`<button type="button" data-chipval="${c}" class="${c===co.colorPDF?'sel':''}" style="background:${c};width:28px;height:28px;border-radius:7px;padding:0"></button>`).join('')}
+            <input type="hidden" name="colorPDF" value="${esc(co.colorPDF)}"></div>
+            <div class="mono" style="font-size:12px;color:var(--muted);margin-top:4px">${esc(co.colorPDF)}</div>
+          </label>
+        </fieldset>
+        <fieldset class="section"><legend>Numeración de documentos</legend>
+          <div class="field-row">
+            <label class="field"><span class="lbl">Prefijo Órdenes de Trabajo</span><input type="text" name="prefijoOT" value="${esc(co.prefijoOT)}"></label>
+            <label class="field"><span class="lbl">Prefijo Solicitudes de Compra</span><input type="text" name="prefijoCompras" value="${esc(co.prefijoCompras)}"></label>
+          </div>
+          <p class="sub" style="color:var(--muted);font-size:12.5px">Vista previa: <code>${esc(co.prefijoOT)}0000001248</code> · <code>${esc(co.prefijoCompras)}000081</code>. Los consecutivos ya emitidos no cambian.</p>
+        </fieldset>
+        <fieldset class="section"><legend>Protección QR con PIN</legend>
+          <label class="field" style="display:flex;align-items:center;gap:10px"><label class="switch"><input type="checkbox" name="protegerQR" ${co.protegerQR?'checked':''}><span class="trk"></span></label><span class="lbl" style="margin:0">Exigir PIN antes de mostrar la información al escanear el QR</span></label>
+          <label class="field"><span class="lbl">PIN (4-8 dígitos)</span><input type="text" name="pinQR" value="${esc(co.pinQR||'')}" maxlength="8"></label>
+        </fieldset>
+        <fieldset class="section"><legend>Copia de seguridad</legend>
+          <button type="button" class="btn" id="btnBackup">⤓ Descargar todos los datos (ZIP simulado)</button>
+        </fieldset>
+        <div style="display:flex;justify-content:flex-end;gap:8px"><button type="submit" class="btn primary">Guardar Ajustes</button></div>
+      </form>
+    </div>`;
+  wireTopbar();
+  const form = document.getElementById('ajustesForm');
+  wireChips(form);
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const fd = new FormData(form);
+    Object.assign(co, { nombre:fd.get('nombre'), nit:fd.get('nit'), direccion:fd.get('direccion'), ciudad:fd.get('ciudad'),
+      telefono:fd.get('telefono'), email:fd.get('email'), sitioWeb:fd.get('sitioWeb'), colorPDF:fd.get('colorPDF'),
+      prefijoOT:fd.get('prefijoOT'), prefijoCompras:fd.get('prefijoCompras'), protegerQR: form.querySelector('[name=protegerQR]').checked, pinQR:fd.get('pinQR') });
+    saveDB(); toast('Ajustes guardados'); render();
+  });
+  document.getElementById('btnBackup').addEventListener('click', ()=>toast('Generando copia de seguridad (ZIP simulado)…'));
+}
+
+/* ---------------- Permisos por rol ---------------- */
+function renderPermisos(params){
+  params = params||{}; const role = params.role || 'ADMINISTRADOR';
+  const perms = DB.roles[session.companyId][role];
+  $app.innerHTML = `${topbarHTML('Configurar Permisos por Rol')}
+    <div class="mod-body">
+      <div class="role-tabs">${ROLES.map(r=>`<button class="btn sm ${r===role?'primary':''}" data-role="${r}">${r}</button>`).join('')}</div>
+      ${role==='ADMINISTRADOR'?'<div class="badge acc" style="display:block;padding:8px 12px;margin-bottom:12px">Acceso completo. Se recomienda mantener todos los permisos activos.</div>':''}
+      ${PERM_CATEGORIES.map(([cat,list])=>`<details class="perm-group" open><summary>${esc(cat)}</summary>
+        ${list.map(p=>`<div class="perm-row"><span>${esc(p)}</span><label class="switch"><input type="checkbox" data-perm="${esc(p)}" ${perms[p]?'checked':''}><span class="trk"></span></label></div>`).join('')}
+      </details>`).join('')}
+      <div style="text-align:right;margin-top:10px"><button class="btn" id="btnResetPerms">Restablecer valores por defecto</button></div>
+    </div>`;
+  wireTopbar();
+  $app.querySelectorAll('[data-role]').forEach(b=>b.addEventListener('click', ()=>{ params.role=b.dataset.role; renderPermisos(params); }));
+  $app.querySelectorAll('[data-perm]').forEach(ch=>ch.addEventListener('change', ()=>{ perms[ch.dataset.perm]=ch.checked; saveDB(); }));
+  document.getElementById('btnResetPerms').addEventListener('click', ()=>{
+    openConfirm('Restablecer permisos', `Se restablecerán los permisos por defecto del rol ${role}.`, 'Restablecer','Cancelar', ()=>{
+      DB.roles[session.companyId][role] = defaultPermsForRole(role); saveDB(); renderPermisos(params); toast('Permisos restablecidos');
+    });
+  });
+}
+
+/* ---------------- Aprobación de usuarios ---------------- */
+function renderAprobacion(){
+  const list = DB.users.filter(u=>u.memberships.some(m=>m.companyId===session.companyId)).map(u=>({u, m:u.memberships.find(m=>m.companyId===session.companyId)}));
+  const pending = list.filter(x=>x.m.estado==='pendiente').length;
+  $app.innerHTML = `${topbarHTML('Aprobar Usuarios Pendientes')}
+    <div class="mod-body">
+      ${pending? `<div class="badge warn" style="display:block;padding:8px 12px;margin-bottom:12px">Pendientes por aprobar: ${pending}</div>`:''}
+      <div class="card-list">${list.map(({u,m})=>`<div class="item-card" data-uid="${u.id}">
+        <div class="row1"><div><div class="ttl">${esc(u.nombre)}</div><div class="sub">${esc(u.correo)} · C.C. ${esc(u.cedula)}</div></div>
+          <span class="badge ${m.estado==='activo'?'ok':'warn'}">${m.estado}</span></div>
+        <div class="acts">
+          <select data-rolsel="${u.id}" style="width:auto;padding:5px 8px;font-size:12.5px">${ROLES.map(r=>`<option value="${r}" ${r===m.rol?'selected':''}>${r}</option>`).join('')}</select>
+          ${m.estado==='pendiente' ? `<button class="btn sm primary" data-aprobar="${u.id}">Aprobar</button><button class="btn sm danger" data-rechazar="${u.id}">Rechazar</button>` : ''}
+        </div></div>`).join('')}</div>
+    </div>`;
+  wireTopbar();
+  $app.querySelectorAll('[data-rolsel]').forEach(sel=>sel.addEventListener('change', ()=>{
+    const u = DB.users.find(x=>x.id===sel.dataset.rolsel); u.memberships.find(m=>m.companyId===session.companyId).rol = sel.value; saveDB(); toast('Rol actualizado');
+  }));
+  $app.querySelectorAll('[data-aprobar]').forEach(b=>b.addEventListener('click', ()=>{
+    const u = DB.users.find(x=>x.id===b.dataset.aprobar); u.memberships.find(m=>m.companyId===session.companyId).estado='activo'; saveDB(); renderAprobacion(); toast('Usuario aprobado');
+  }));
+  $app.querySelectorAll('[data-rechazar]').forEach(b=>b.addEventListener('click', ()=>{
+    openConfirm('Rechazar usuario','El usuario no podrá ingresar a esta empresa.','Rechazar','Cancelar', ()=>{
+      const u = DB.users.find(x=>x.id===b.dataset.rechazar); u.memberships = u.memberships.filter(m=>m.companyId!==session.companyId); saveDB(); renderAprobacion();
+    });
+  }));
+}
+
+/* ---------------- Indicadores ---------------- */
+function kpiKey(){ return '2026-10'; }
+function renderIndicadores(){
+  DB.kpiMonthly[session.companyId] = DB.kpiMonthly[session.companyId] || {};
+  const key = kpiKey();
+  const k = DB.kpiMonthly[session.companyId][key] = DB.kpiMonthly[session.companyId][key] || { mtbf:0,mttr:0,confiabilidad:0,disponibilidad:0,totalRegistros:0,mantosPreventivos:0,mantosCorrectivos:0,numParadas:0,tiempoImproductivo:0,fallasPorTipo:{electrica:0,mecanica:0,hidraulica:0,otra:0},distribucionActividad:{inspeccion:0,preventivo:0,correctivo:0,mejora:0},hop:0,costoTotalMtto:0,costoInsumos:0,costoExternos:0,energia:0,toneladas:0,publicado:false };
+  const valorHora = k.hop ? Math.round(k.costoTotalMtto / k.hop) : 0;
+  const valorParada = k.numParadas ? Math.round(k.costoTotalMtto / k.numParadas) : 0;
+  const valorTon = k.toneladas ? Math.round(k.costoTotalMtto / k.toneladas) : 0;
+  const bar = (label,val)=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span>${esc(label)}</span><span class="mono">${val}%</span></div><div style="height:7px;border-radius:4px;background:var(--panel-2)"><div style="height:7px;border-radius:4px;background:var(--accent);width:${val}%"></div></div></div>`;
+  $app.innerHTML = `${topbarHTML('Indicadores', hasPerm('Publicar indicadores')?`<button data-publish>${k.publicado?'✓ Publicado':'Publicar'}</button>`:'')}
+    <div class="mod-body">
+      ${!k.publicado?`<div class="badge warn" style="display:block;padding:8px 12px;margin-bottom:12px">Este mes aún no ha sido publicado. Los demás usuarios no ven información actualizada.</div>`:''}
+      <h3 style="margin-top:0">Octubre 2026 · KPIs de confiabilidad</h3>
+      <div class="stat-row">
+        <div class="stat-box"><div class="n">${k.mtbf}h</div><div class="l">MTBF</div></div>
+        <div class="stat-box"><div class="n">${k.mttr}h</div><div class="l">MTTR</div></div>
+        <div class="stat-box"><div class="n">${k.confiabilidad}%</div><div class="l">Confiabilidad</div></div>
+        <div class="stat-box"><div class="n">${k.disponibilidad}%</div><div class="l">Disponibilidad</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="n">${k.totalRegistros}</div><div class="l">Total registros</div></div>
+        <div class="stat-box"><div class="n">${k.mantosPreventivos}</div><div class="l">Mttos preventivos</div></div>
+        <div class="stat-box"><div class="n">${k.mantosCorrectivos}</div><div class="l">Mttos correctivos</div></div>
+        <div class="stat-box"><div class="n">${k.numParadas}</div><div class="l">N° paradas correctivas</div></div>
+        <div class="stat-box"><div class="n">${k.tiempoImproductivo}h</div><div class="l">T. improductivo</div></div>
+      </div>
+      <fieldset class="section"><legend>Fallas por tipo (correctivos)</legend>
+        ${bar('Eléctrica',k.fallasPorTipo.electrica)}${bar('Mecánica',k.fallasPorTipo.mecanica)}${bar('Hidráulica',k.fallasPorTipo.hidraulica)}${bar('Otra',k.fallasPorTipo.otra)}
+      </fieldset>
+      <fieldset class="section"><legend>Distribución por tipo de actividad</legend>
+        ${bar('Inspección',k.distribucionActividad.inspeccion)}${bar('Preventivo',k.distribucionActividad.preventivo)}${bar('Correctivo',k.distribucionActividad.correctivo)}${bar('Mejora',k.distribucionActividad.mejora)}
+      </fieldset>
+      <fieldset class="section"><legend>Datos económicos del mes</legend>
+        <div class="field-row">
+          <div class="stat-box"><div class="n mono" style="font-size:16px">${k.hop}</div><div class="l">HOP</div></div>
+          <div class="stat-box"><div class="n mono" style="font-size:16px">$${k.costoTotalMtto.toLocaleString('es-CO')}</div><div class="l">Costo total mtto.</div></div>
+          <div class="stat-box"><div class="n mono" style="font-size:16px">$${valorHora.toLocaleString('es-CO')}</div><div class="l">Valor hora ✨</div></div>
+          <div class="stat-box"><div class="n mono" style="font-size:16px">$${valorParada.toLocaleString('es-CO')}</div><div class="l">Valor de parada ✨</div></div>
+          <div class="stat-box"><div class="n mono" style="font-size:16px">$${valorTon.toLocaleString('es-CO')}</div><div class="l">Valor tonelada ✨</div></div>
+        </div>
+        <button class="btn" id="btnDatosMes">Editar Datos del Mes</button>
+      </fieldset>
+    </div>`;
+  wireTopbar();
+  const pb = $app.querySelector('[data-publish]'); if(pb) pb.addEventListener('click', ()=>{ k.publicado=!k.publicado; saveDB(); renderIndicadores(); toast(k.publicado?'Indicadores publicados':'Publicación revertida'); });
+  document.getElementById('btnDatosMes').addEventListener('click', ()=>{
+    overlayDirty=false;
+    openOverlay(`<div class="sheet" onmousedown="event.stopPropagation()"><div class="sheet-head"><h2>Datos del Mes — Octubre 2026</h2><button class="iconbtn" data-closeform>✕</button></div>
+      <form id="kpiForm"><div class="sheet-body">
+        <div class="field-row">
+          <label class="field"><span class="lbl">MTBF (h)</span><input type="number" name="mtbf" value="${k.mtbf}"></label>
+          <label class="field"><span class="lbl">MTTR (h)</span><input type="number" step="0.1" name="mttr" value="${k.mttr}"></label>
+          <label class="field"><span class="lbl">Confiabilidad (%)</span><input type="number" name="confiabilidad" value="${k.confiabilidad}"></label>
+          <label class="field"><span class="lbl">Disponibilidad (%)</span><input type="number" name="disponibilidad" value="${k.disponibilidad}"></label>
+        </div>
+        <div class="field-row">
+          <label class="field"><span class="lbl">HOP del mes</span><input type="number" name="hop" value="${k.hop}"></label>
+          <label class="field"><span class="lbl">Costo total mantenimiento</span><input type="number" name="costoTotalMtto" value="${k.costoTotalMtto}"></label>
+          <label class="field"><span class="lbl">Costo de insumos</span><input type="number" name="costoInsumos" value="${k.costoInsumos}"></label>
+          <label class="field"><span class="lbl">Costo mttos. externos</span><input type="number" name="costoExternos" value="${k.costoExternos}"></label>
+          <label class="field"><span class="lbl">Consumo de energía total</span><input type="number" name="energia" value="${k.energia}"></label>
+          <label class="field"><span class="lbl">Toneladas procesadas</span><input type="number" name="toneladas" value="${k.toneladas}"></label>
+        </div>
+      </div><div class="sheet-foot"><button type="button" class="btn" data-closeform>Cancelar</button><button class="btn primary" type="submit">Guardar</button></div></form></div>`);
+    const sheet = $ov.querySelector('.sheet');
+    sheet.querySelectorAll('input').forEach(el=>el.addEventListener('input',()=>overlayDirty=true));
+    sheet.querySelectorAll('[data-closeform]').forEach(b=>b.addEventListener('click', ()=>askCloseOverlay()));
+    document.getElementById('kpiForm').addEventListener('submit', e=>{
+      e.preventDefault(); const fd = new FormData(e.target);
+      ['mtbf','mttr','confiabilidad','disponibilidad','hop','costoTotalMtto','costoInsumos','costoExternos','energia','toneladas'].forEach(k2=>k[k2]=Number(fd.get(k2))||0);
+      overlayDirty=false; saveDB(); closeOverlay(); renderIndicadores(); toast('Datos del mes guardados');
+    });
+  });
+}
+
+/* ---------------- Prog. Mensual Equipos (HOP) ---------------- */
+function renderProgMensual(){
+  DB.monthlyHOP[session.companyId] = DB.monthlyHOP[session.companyId] || {};
+  const key = kpiKey();
+  const m = DB.monthlyHOP[session.companyId][key] = DB.monthlyHOP[session.companyId][key] || {confirmado:false, porEquipo:{}};
+  const assets = companyColl('assets').filter(a=>a.tipo==='equipo');
+  assets.forEach(a=>{ if(!m.porEquipo[a.id]) m.porEquipo[a.id] = {calc:(a.horasOperacionSemana||0)*4.43|0, plan:(a.horasOperacionSemana||0)*4.43|0, real:0}; });
+  const zonas = [...new Set(assets.map(a=>a.zona||'SIN ZONA'))];
+  const totalHOP = Object.values(m.porEquipo).reduce((s,v)=>s+(v.plan||0),0);
+  $app.innerHTML = `${topbarHTML('Prog. Mensual Equipos', `<button data-copyreal>Copiar real→HOP</button><button data-confirmhop>${m.confirmado?'✓ Confirmado':'Confirmar HOP'}</button>`)}
+    <div class="mod-body">
+      <div class="stat-row">
+        <div class="stat-box"><div class="n">${totalHOP}h</div><div class="l">Total HOP</div></div>
+        <div class="stat-box"><div class="n">${assets.filter(a=>a.estado==='ACTIVO').length}</div><div class="l">Activos</div></div>
+        <div class="stat-box"><div class="n">${assets.filter(a=>a.estado!=='ACTIVO').length}</div><div class="l">Fuera / inactivos</div></div>
+        <div class="stat-box"><div class="n">${assets.length}</div><div class="l">Equipos totales</div></div>
+      </div>
+      ${zonas.map(z=>`<fieldset class="section"><legend>${esc(z)} — ${assets.filter(a=>(a.zona||'SIN ZONA')===z).reduce((s,a)=>s+(m.porEquipo[a.id].plan||0),0)} h</legend>
+        <div class="tbl-wrap"><table class="data"><thead><tr><th>Código</th><th>Nombre</th><th>Estado</th><th>Calc.</th><th>Plan</th><th>Real</th><th>HOP final</th></tr></thead><tbody>
+        ${assets.filter(a=>(a.zona||'SIN ZONA')===z).map(a=>{
+          const row = m.porEquipo[a.id]; const forced = a.estado==='FUERA DE SERVICIO';
+          return `<tr><td class="mono">${esc(a.codigo)}</td><td>${esc(a.nombre)}</td><td><span class="badge ${a.estado==='ACTIVO'?'ok':'bad'}">${esc(a.estado)}</span></td>
+            <td class="mono">${row.calc}</td><td class="mono">${row.plan}</td><td class="mono">${row.real}</td>
+            <td><input type="number" data-hopfinal="${a.id}" value="${forced?0:(row.hopFinal!=null?row.hopFinal:row.plan)}" ${forced?'disabled title="Horas = 0 por estado FUERA DE SERVICIO"':''} style="width:84px;padding:5px 7px"></td></tr>`;
+        }).join('')}
+        </tbody></table></div>
+      </fieldset>`).join('')}
+    </div>`;
+  wireTopbar();
+  $app.querySelectorAll('[data-hopfinal]').forEach(inp=>inp.addEventListener('change', ()=>{ m.porEquipo[inp.dataset.hopfinal].hopFinal = Number(inp.value)||0; saveDB(); }));
+  $app.querySelector('[data-copyreal]').addEventListener('click', ()=>{ Object.values(m.porEquipo).forEach(v=>v.plan=v.real); saveDB(); renderProgMensual(); toast('Real copiado a HOP'); });
+  $app.querySelector('[data-confirmhop]').addEventListener('click', ()=>{ m.confirmado=!m.confirmado; saveDB(); renderProgMensual(); toast(m.confirmado?'Mes confirmado':'Confirmación revertida'); });
+}
+
+/* ---------------- Estado de Mantenimiento / Estado de Rutinas ---------------- */
+function addInterval(d, freq){
+  const nd = new Date(d.getTime());
+  if(freq==='Diaria') nd.setDate(nd.getDate()+1);
+  else if(freq==='Semanal') nd.setDate(nd.getDate()+7);
+  else if(freq==='Quincenal') nd.setDate(nd.getDate()+15);
+  else if(freq==='Trimestral') nd.setMonth(nd.getMonth()+3);
+  else if(freq==='Semestral') nd.setMonth(nd.getMonth()+6);
+  else if(freq==='Anual') nd.setFullYear(nd.getFullYear()+1);
+  else nd.setMonth(nd.getMonth()+1); /* Mensual por defecto */
+  return nd;
+}
+function nextOccurrence(startISO, freq){
+  let d = new Date(startISO+'T00:00:00'); const today = new Date(todayISO()+'T00:00:00'); let guard=0;
+  while(d < today && guard<800){ d = addInterval(d, freq); guard++; }
+  return d;
+}
+function renderEstadoCiclo(kind, bucketFilter){
+  const isPlan = kind==='plan';
+  const label = isPlan ? 'Estado de Mantenimiento' : 'Estado de Rutinas';
+  const coll = isPlan ? companyColl('maintenancePlans') : companyColl('maintenanceRoutines');
+  const today = new Date(todayISO()+'T00:00:00');
+  const rows = coll.map(p=>{
+    const start = isPlan ? p.fechaInicio : p.fechaInicioCiclo;
+    const next = nextOccurrence(start||todayISO(), p.frecuencia);
+    const diffDays = Math.round((next-today)/86400000);
+    let bucket = 'Al día';
+    if(diffDays<0) bucket='Atrasados'; else if(diffDays<=7) bucket='Próximos';
+    const relatedOTs = companyColl('workOrders').filter(o=> (o.planOrigen||'')===p.nombre);
+    return {p, next, diffDays, bucket, relatedOTs};
+  });
+  const buckets = ['Atrasados','Próximos','Al día'];
+  const counts = { 'Atrasados':rows.filter(r=>r.bucket==='Atrasados').length, 'Próximos':rows.filter(r=>r.bucket==='Próximos').length, 'Al día':rows.filter(r=>r.bucket==='Al día').length, [isPlan?'Sin plan':'Sin rutina']: Math.max(0, coll.length - rows.length) };
+  const shown = bucketFilter ? rows.filter(r=>r.bucket===bucketFilter) : rows;
+  $app.innerHTML = `${topbarHTML(label)}
+    <div class="mod-body">
+      <div class="stat-row">
+        ${Object.entries(counts).map(([l,c])=>`<div class="stat-box ${bucketFilter===l?'active':''}" data-bucket="${esc(l)}"><div class="n">${c}</div><div class="l">${esc(l)}</div></div>`).join('')}
+      </div>
+      <div class="card-list">${shown.length? shown.map(r=>`<div class="item-card">
+          <div class="row1"><div><div class="ttl">${esc(r.p.nombre)}</div><div class="sub">${r.p.tipoMtto} · ${r.p.frecuencia} · ${esc(r.p.equipo||'')}</div></div>
+            <span class="badge ${r.bucket==='Atrasados'?'bad':r.bucket==='Próximos'?'warn':'ok'}">${r.diffDays<0?('Atraso '+Math.abs(r.diffDays)+'d'):r.diffDays===0?'Vence hoy':('En '+r.diffDays+'d')}</span></div>
+          <div class="sub">Próx.: ${fmtDate(r.next.toISOString().slice(0,10))} · ${r.relatedOTs.length} OT generada(s)${r.relatedOTs.some(o=>o.estado==='PENDIENTE')?'':''}</div>
+          ${r.bucket!=='Al día' && !r.relatedOTs.some(o=>o.estado==='PENDIENTE') ? `<div class="acts"><button class="btn sm primary" data-genot="${r.p.id}">Generar OT</button></div>` : ''}
+        </div>`).join('') : `<div class="empty-state">Sin registros en este filtro.</div>`}</div>
+    </div>`;
+  wireTopbar();
+  $app.querySelectorAll('[data-bucket]').forEach(b=>b.addEventListener('click', ()=>renderEstadoCiclo(kind, b.dataset.bucket===bucketFilter?null:(buckets.includes(b.dataset.bucket)?b.dataset.bucket:null))));
+  $app.querySelectorAll('[data-genot]').forEach(b=>b.addEventListener('click', ()=>{
+    const p = coll.find(x=>x.id===b.dataset.genot);
+    DB.workOrders.push({ id:uid('ot'), companyId:session.companyId, consecutivo:'OT-'+String(1000000+companyColl('workOrders').length+1),
+      titulo:`${isPlan?'Plan':'Rutina'} ${p.nombre} — ${p.equipo||''}`, tipoMtto:p.tipoMtto, prioridad:p.prioridad||'Media', tipoActivo:p.tipoActivo||'equipo',
+      assetIds:[], planOrigen:p.nombre, actividades:(p.actividades||[]).map(a=>({texto:a.texto,completada:false})),
+      responsable:p.responsable||'Sin asignar', fechaProgramada:todayISO(), fechaLimite:null, turno:'Mañana', observacionesAdmin:'Generada automáticamente', estado:'PENDIENTE' });
+    saveDB(); toast('OT generada'); renderEstadoCiclo(kind, bucketFilter);
+  }));
+}
+
+/* ---------------- Programación de Personal ---------------- */
+const TURNOS = ['mañana','tarde','noche','personalizado','descanso'];
+const TURNO_LABEL = {mañana:'Mañana',tarde:'Tarde',noche:'Noche',personalizado:'Personalizado',descanso:'Descanso'};
+function renderProgramacion(){
+  DB.staffSchedule[session.companyId] = DB.staffSchedule[session.companyId] || { semanaInicio:'2026-10-18', semanaFin:'2026-10-24', mañana:[],tarde:[],noche:[],personalizado:[],descanso:[] };
+  const sc = DB.staffSchedule[session.companyId];
+  $app.innerHTML = `${topbarHTML('Programación de Personal', `<button data-exportpdf>Exportar PDF</button>`)}
+    <div class="mod-body">
+      <p class="sub" style="color:var(--muted)">Semana del ${fmtDate(sc.semanaInicio)} al ${fmtDate(sc.semanaFin)}</p>
+      <div class="kanban">
+        ${TURNOS.map(t=>`<div class="kcol"><h4>${TURNO_LABEL[t]} (${(sc[t]||[]).length})</h4>
+          ${(sc[t]||[]).map((p,i)=>`<div class="item-card">
+            <div class="ttl">${esc(p.nombre)}</div><div class="sub">${esc(p.rol)} · ${esc(p.horario)}</div>
+            ${p.nota?`<div class="sub" style="margin-top:4px">${esc(p.nota)}</div>`:''}
+            <div class="acts"><button class="btn sm danger" data-rmturno="${t}:${i}">Quitar</button></div>
+          </div>`).join('')}
+          <button class="btn sm" data-addturno="${t}" style="width:100%;justify-content:center">+ Agregar</button>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  wireTopbar();
+  $app.querySelector('[data-exportpdf]').addEventListener('click', ()=>toast('Exportando programación a PDF (simulado)…'));
+  $app.querySelectorAll('[data-rmturno]').forEach(b=>b.addEventListener('click', ()=>{
+    const [t,i] = b.dataset.rmturno.split(':'); sc[t].splice(Number(i),1); saveDB(); renderProgramacion();
+  }));
+  $app.querySelectorAll('[data-addturno]').forEach(b=>b.addEventListener('click', ()=>{
+    const t = b.dataset.addturno; overlayDirty=false;
+    openOverlay(`<div class="sheet" onmousedown="event.stopPropagation()"><div class="sheet-head"><h2>Agregar a ${TURNO_LABEL[t]}</h2><button class="iconbtn" data-closeform>✕</button></div>
+      <form id="turnoForm"><div class="sheet-body">
+        <label class="field"><span class="lbl">Persona</span><select name="nombre" required>${tecnicoOptions().map(n=>`<option>${esc(n)}</option>`).join('')}</select></label>
+        <label class="field"><span class="lbl">Rol</span><input type="text" name="rol" value="TECNICO"></label>
+        <label class="field"><span class="lbl">Horario</span><input type="text" name="horario" placeholder="06:00 – 13:00" required></label>
+        <label class="field"><span class="lbl">Nota de rotación (opcional)</span><textarea name="nota"></textarea></label>
+      </div><div class="sheet-foot"><button type="button" class="btn" data-closeform>Cancelar</button><button class="btn primary" type="submit">Agregar</button></div></form></div>`);
+    const sheet = $ov.querySelector('.sheet');
+    sheet.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',()=>overlayDirty=true));
+    sheet.querySelectorAll('[data-closeform]').forEach(x=>x.addEventListener('click',()=>askCloseOverlay()));
+    document.getElementById('turnoForm').addEventListener('submit', e=>{
+      e.preventDefault(); const fd=new FormData(e.target);
+      sc[t].push({nombre:fd.get('nombre'), rol:fd.get('rol'), horario:fd.get('horario'), nota:fd.get('nota')});
+      overlayDirty=false; saveDB(); closeOverlay(); renderProgramacion(); toast('Persona agregada al turno');
+    });
+  }));
+}
+
+/* ---------------- dispatcher principal ---------------- */
+function render(){
+  document.body.scrollTop = 0;
+  if(session.view==='login'){ renderLogin(); return; }
+  if(session.view==='companies'){ renderCompanies(); return; }
+  if(session.view==='home'){ renderHome(); return; }
+  if(session.view==='ajustes'){ renderAjustes(); return; }
+  if(session.view==='permisos'){ renderPermisos(session.params); return; }
+  if(session.view==='aprobacion'){ renderAprobacion(); return; }
+  if(session.view==='indicadores'){ renderIndicadores(); return; }
+  if(session.view==='progmensual'){ renderProgMensual(); return; }
+  if(session.view==='estadomtto'){ renderEstadoCiclo('plan'); return; }
+  if(session.view==='estadorutinas'){ renderEstadoCiclo('rutina'); return; }
+  if(session.view==='programacion'){ renderProgramacion(); return; }
+  if(MODULES[session.view]){ renderModuleScreen(session.view, session.params); return; }
+  renderHome();
+}
+
+/* ---------------- arranque ---------------- */
+loadDB();
+render();
+</script>
+
+
+</body></html>
